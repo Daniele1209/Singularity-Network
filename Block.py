@@ -1,5 +1,7 @@
 import time
 import hashlib
+import math
+import random
 
 class Block:
 
@@ -9,6 +11,8 @@ class Block:
         self._previousHash = previousHash
         self._transaction = transaction
         self._timeStamp = time.time()
+        # used for the proof of work system
+        self._nonce = math.floor(random.random() * 999999999)
 
     @property
     def getHash(self):
