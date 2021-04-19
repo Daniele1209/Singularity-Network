@@ -21,6 +21,8 @@ class UI:
         satoshi = Wallet(self._Chain)
         alice = Wallet(self._Chain)
 
+        print("wallets created !")
+
         self._Wallet.sendCoins(10, satoshi._publicKey)
         satoshi.sendCoins(10, self._Wallet._publicKey)
         alice.sendCoins(10, self._Wallet._publicKey)

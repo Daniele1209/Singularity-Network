@@ -7,6 +7,7 @@ import binascii
 import hashlib
 from Transaction import Transaction
 
+
 class Wallet:
 
     def __init__(self, chain):
@@ -15,7 +16,7 @@ class Wallet:
         self.generateKeyPair()
         self._Chain = chain
 
-    # We use "RSA" encryption - use to encypt and decrypt
+    # We use "RSA" encryption - use to encrypt and decrypt
     # Use public key to encrypt
     # Use private key to decrypt
     # => we use both keys to create a digital signature
@@ -25,9 +26,9 @@ class Wallet:
         private_key = RSA.generate(2048, random_gen)
         public_key = private_key.publickey()
         key_pair = {
-		    "private_key" : binascii.hexlify(private_key.exportKey(format='PEM')).decode('ascii'),
-		    "public_key": binascii.hexlify(public_key.exportKey(format='PEM')).decode('ascii')
-	    }
+            "private_key": binascii.hexlify(private_key.exportKey(format='PEM')).decode('ascii'),
+            "public_key": binascii.hexlify(public_key.exportKey(format='PEM')).decode('ascii')
+        }
 
         self._privateKey = key_pair["private_key"]
         self._publicKey = key_pair["public_key"]
@@ -37,7 +38,10 @@ class Wallet:
 
         private_key = RSA.importKey(binascii.unhexlify(self._privateKey))
         signer = PKCS1_v1_5.new(private_key)
-        hash = SHA.new(executedTransaction.toString().encode('utf8'))
-        signature = binascii.hexlify(signer.sign(hash)).decode('ascii')
+        _hash = SHA.new(executedTransaction.toString().encode('utf8'))
+        signature = binascii.hexlify(signer.sign(_hash)).decode('ascii')
 
         self._Chain.addBlock(self._publicKey, signature, executedTransaction)
+
+    def get_public_key(self):
+        return self._publicKey

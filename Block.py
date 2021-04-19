@@ -21,3 +21,13 @@ class Block:
 
     def __repr__(self):
         return "{} - {} - {} - {} - {}".format(self._index, self._previousHash, self._transaction, self._transaction, self._timeStamp)
+
+    def get_nonce(self):
+        return self._nonce
+
+    def get_proof(self):
+        return self._proof
+
+    @property
+    def nonce(self):
+        return self._nonce

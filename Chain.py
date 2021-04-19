@@ -27,19 +27,17 @@ class Chain:
     def addBlock(self, senderKey, signature, transaction):
         publicKey = RSA.importKey(binascii.unhexlify(senderKey))
         verifier = PKCS1_v1_5.new(publicKey)
-        hash = SHA.new(transaction.toString().encode('utf8'))
-        isValid = verifier.verify(hash, binascii.unhexlify(signature))
+        _hash = SHA.new(transaction.toString().encode('utf8'))
 
-        if isValid:
+        if verifier.verify(_hash, binascii.unhexlify(signature)):
             lastBlock = self.lastBlock()
-            lastProof = lastBlock.proof
+            lastProof = lastBlock.get_proof()
             proof_no = self.mine(lastProof)
 
             blockToAdd = Block(len(self._chain), proof_no ,self.lastBlock().getHash(), transaction)
-            self.mine(blockToAdd._nonce)
+            self.mine(blockToAdd.get_nonce())
             self._chain.append(blockToAdd)
 
-    @property
     def lastBlock(self):
         return self._chain[-1]
 
@@ -59,7 +57,7 @@ class Chain:
         # Then it can be sent to other nodes to be verified
         while True:
             hash = MD5.new()
-            hash.update(str(nonce + solution))
+            hash.update(str(nonce + solution).encode('utf8'))
 
             attempt = hash.hexdigest()
 
