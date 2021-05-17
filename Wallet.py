@@ -15,6 +15,7 @@ class Wallet:
         self._privateKey = None
         self.generateKeyPair()
         self._Chain = chain
+        self._coin_count = 0
 
     # We use "RSA" encryption - use to encrypt and decrypt
     # Use public key to encrypt
@@ -45,3 +46,6 @@ class Wallet:
 
     def get_public_key(self):
         return self._publicKey
+
+    def get_coins(self):
+        return self._coin_count

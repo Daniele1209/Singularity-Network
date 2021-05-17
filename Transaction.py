@@ -1,4 +1,5 @@
 import hashlib
+import time
 
 class Transaction:
 
@@ -6,6 +7,7 @@ class Transaction:
         self._amount = amount
         self._payer = payer
         self._payee = payee
+        self._time = time.localtime()
 
     def toString(self):
-        return str(self._amount) + " " + self._payer + " " + self._payee
+        return str(self._amount) + " " + str(self._payer) + " " + str(self._payee) + " " + str(self._time)

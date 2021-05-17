@@ -1,4 +1,4 @@
-from Block import Block
+from Block import *
 from Transaction import Transaction
 from Crypto.Hash import SHA, MD5
 from Crypto.PublicKey import RSA
@@ -34,7 +34,7 @@ class Chain:
             lastProof = lastBlock.get_proof()
             proof_no = self.mine(lastProof)
 
-            blockToAdd = Block(len(self._chain), proof_no ,self.lastBlock().getHash(), transaction)
+            blockToAdd = Block(len(self._chain), proof_no, lastBlock.getHash, transaction)
             self.mine(blockToAdd.get_nonce())
             self._chain.append(blockToAdd)
 
@@ -61,12 +61,16 @@ class Chain:
 
             attempt = hash.hexdigest()
 
-            if attempt[0:4] == "0000":
+            if attempt[0:4] == "1234":
                 print("Solved !")
                 print(solution)
                 return solution
             
             solution += 1
+
+    def print_chain(self):
+        for block in self._chain:
+            print(block)
 
 
     

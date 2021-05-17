@@ -17,6 +17,7 @@ class UI:
                         ███████║██║██║ ╚████║╚██████╔╝╚██████╔╝███████╗██║  ██║██║  ██║██║   ██║      ██║   ╚██████╗╚██████╔╝██║██║ ╚████║
                         ╚══════╝╚═╝╚═╝  ╚═══╝ ╚═════╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝   ╚═╝      ╚═╝    ╚═════╝ ╚═════╝ ╚═╝╚═╝  ╚═══╝
         """)
+
         self._Wallet = Wallet(self._Chain)
         satoshi = Wallet(self._Chain)
         alice = Wallet(self._Chain)
@@ -24,10 +25,13 @@ class UI:
         print("wallets created !")
 
         self._Wallet.sendCoins(10, satoshi._publicKey)
+        print("transaction success !")
         satoshi.sendCoins(10, self._Wallet._publicKey)
+        print("transaction success !")
         alice.sendCoins(10, self._Wallet._publicKey)
+        print("transaction success !")
 
-        print(self._Chain)
+        self._Chain.print_chain()
 
 
 ui = UI()
