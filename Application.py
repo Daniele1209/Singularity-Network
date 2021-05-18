@@ -19,6 +19,8 @@ class UI:
         """)
 
         self._Wallet = Wallet(self._Chain)
+
+        
         satoshi = Wallet(self._Chain)
         alice = Wallet(self._Chain)
 
@@ -33,6 +35,8 @@ class UI:
 
         self._Chain.print_chain()
 
+        print(self._Wallet.get_coins())
+        
 
 ui = UI()
 ui.run()

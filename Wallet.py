@@ -15,7 +15,7 @@ class Wallet:
         self._privateKey = None
         self.generateKeyPair()
         self._Chain = chain
-        self._coin_count = 0
+        self._coin_count = 100
 
     # We use "RSA" encryption - use to encrypt and decrypt
     # Use public key to encrypt
@@ -35,14 +35,18 @@ class Wallet:
         self._publicKey = key_pair["public_key"]
 
     def sendCoins(self, amount, payeePublicKey):
-        executedTransaction = Transaction(amount, self._publicKey, payeePublicKey)
+        if self._coin_count - amount >= 0:
+            executedTransaction = Transaction(amount, self._publicKey, payeePublicKey)
 
-        private_key = RSA.importKey(binascii.unhexlify(self._privateKey))
-        signer = PKCS1_v1_5.new(private_key)
-        _hash = SHA.new(executedTransaction.toString().encode('utf8'))
-        signature = binascii.hexlify(signer.sign(_hash)).decode('ascii')
+            private_key = RSA.importKey(binascii.unhexlify(self._privateKey))
+            signer = PKCS1_v1_5.new(private_key)
+            _hash = SHA.new(executedTransaction.toString().encode('utf8'))
+            signature = binascii.hexlify(signer.sign(_hash)).decode('ascii')
 
-        self._Chain.addBlock(self._publicKey, signature, executedTransaction)
+            self._Chain.addBlock(self._publicKey, signature, executedTransaction)
+            self._coin_count -= amount
+        else:
+            raise binascii.Error("Insufficient balance !")
 
     def get_public_key(self):
         return self._publicKey
