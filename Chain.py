@@ -3,15 +3,20 @@ from Transaction import Transaction
 from Crypto.Hash import SHA, MD5
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
+from urllib.parse import urlparse
 import binascii
 
 class Chain:
 
     def __init__(self):
         self._chain = []
+        self._pendingTransactions = []
+        self._blockSize = 10
         self._nodes = set()
         # Defining the first block in the chain
         self.Genesis()
+        #User reward for mining
+        self._reward = 20
     
     def Genesis(self):
         self.newBlock(0, 0, Transaction(1, "Genesis", "Viniele"))
@@ -21,6 +26,11 @@ class Chain:
         self._chain.append(block)
 
         return block
+
+    # In order to create a P2P network we need to sign each user as a node
+    def register_node(self, address):
+        parsedUrl = urlparse(address);
+        self.nodes.add(parsedUrl.netloc);
 
     # check that the signature corresponds to transaction
     # signed by the public key (sender_address)
@@ -67,6 +77,14 @@ class Chain:
                 return solution
             
             solution += 1
+
+    def resolveConflicts(self):
+        new_chain = None
+        chain_length = len(self._chain)
+
+        for node in self._nodes:
+            response = request.get(f'http://{node}/chain')
+
 
     def print_chain(self):
         for block in self._chain:
