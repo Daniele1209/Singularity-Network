@@ -4,7 +4,7 @@ from Chain import Chain
 class UI:
 
     def __init__(self):
-        self._User = input("Enter a username >>> ")
+        #self._User = input("Enter a username >>> ")
         self._Wallet = None
         self._Chain = Chain()
 
@@ -20,7 +20,7 @@ class UI:
 
         self._Wallet = Wallet(self._Chain)
 
-        
+        """
         satoshi = Wallet(self._Chain)
         alice = Wallet(self._Chain)
 
@@ -36,7 +36,7 @@ class UI:
         self._Chain.print_chain()
 
         print(self._Wallet.get_coins())
-        
+        """
 
 ui = UI()
 ui.run()

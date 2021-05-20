@@ -27,11 +27,6 @@ class Chain:
 
         return block
 
-    # In order to create a P2P network we need to sign each user as a node
-    def register_node(self, address):
-        parsedUrl = urlparse(address);
-        self.nodes.add(parsedUrl.netloc);
-
     # check that the signature corresponds to transaction
     # signed by the public key (sender_address)
     def addBlock(self, senderKey, signature, transaction):
@@ -77,14 +72,6 @@ class Chain:
                 return solution
             
             solution += 1
-
-    def resolveConflicts(self):
-        new_chain = None
-        chain_length = len(self._chain)
-
-        for node in self._nodes:
-            response = request.get(f'http://{node}/chain')
-
 
     def print_chain(self):
         for block in self._chain:

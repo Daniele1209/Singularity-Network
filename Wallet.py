@@ -31,6 +31,11 @@ class Wallet:
             "public_key": binascii.hexlify(public_key.exportKey(format='PEM')).decode('ascii')
         }
 
+        file_out = open("PrivateKey.pem", "wb")
+        file_out.write(private_key.export_key())
+        file_out = open("PublicKey.pem", "wb")
+        file_out.write(public_key.export_key())
+
         self._privateKey = key_pair["private_key"]
         self._publicKey = key_pair["public_key"]
 
