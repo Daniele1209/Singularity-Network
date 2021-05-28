@@ -41,7 +41,9 @@ class Chain:
 
             blockToAdd = Block(len(self._chain), proof_no, lastBlock.getHash, transaction)
             self.mine(blockToAdd.get_nonce())
-            self._chain.append(blockToAdd)
+            self._pendingTransactions.append(blockToAdd)
+
+
 
     def lastBlock(self):
         return self._chain[-1]
