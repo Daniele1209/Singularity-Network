@@ -35,15 +35,29 @@ class Chain:
         _hash = SHA.new(transaction.toString().encode('utf8'))
 
         if verifier.verify(_hash, binascii.unhexlify(signature)):
+            self._pendingTransactions.append(transaction)
+
+    # get transactions from list of pending transactions and process them
+    def minePending(self, miner):
+        if len(self._pendingTransactions) <= 0:
+            print("Nothing to mine ! :(")
+            return False
+
+        else:
+            transaction = self._pendingTransactions.pop(0)
+        
             lastBlock = self.lastBlock()
             lastProof = lastBlock.get_proof()
             proof_no = self.mine(lastProof)
-
             blockToAdd = Block(len(self._chain), proof_no, lastBlock.getHash, transaction)
-            self.mine(blockToAdd.get_nonce())
-            self._pendingTransactions.append(blockToAdd)
+            #self.mine(blockToAdd.get_nonce())
 
+            self._chain.append(blockToAdd)
 
+            minerReward = Transaction(self._reward, "system", miner)
+            self._pendingTransactions.append(minerReward)
+
+        return True
 
     def lastBlock(self):
         return self._chain[-1]
@@ -55,6 +69,19 @@ class Chain:
 
         if prevBlock.getHash != block.previousHash:
             return False
+
+    # itereate through the blockchain and find the user transactions so that you can determine
+    # his balance
+    def getWalletBalance(self, wallet):
+        total = 0
+        for block in self._chain:
+            if block._transaction._payer == wallet:
+                total -= block._transaction._amount
+            if block._transaction._payee == wallet:
+                total += block._transaction._amount
+            
+        return total
+
         
     def mine(self, nonce):
         solution = 1

@@ -20,23 +20,26 @@ class UI:
 
         self._Wallet = Wallet(self._Chain)
 
-        """
+       
         satoshi = Wallet(self._Chain)
         alice = Wallet(self._Chain)
 
         print("wallets created !")
 
         self._Wallet.sendCoins(10, satoshi._publicKey)
-        print("transaction success !")
         satoshi.sendCoins(10, self._Wallet._publicKey)
-        print("transaction success !")
         alice.sendCoins(10, self._Wallet._publicKey)
-        print("transaction success !")
+        print("Transactions are pending !")
+        print(self._Chain._pendingTransactions)
+
+        # Processing pending transactions
+        self._Chain.minePending(satoshi._publicKey)
+        print(self._Chain._pendingTransactions)
 
         self._Chain.print_chain()
 
-        print(self._Wallet.get_coins())
-        """
+        #print(self._Wallet.get_coins())
+        
 
 ui = UI()
 ui.run()
