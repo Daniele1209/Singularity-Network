@@ -1,5 +1,6 @@
 from Wallet import Wallet
 from Chain import Chain
+from rich import print
 
 class UI:
 
@@ -24,15 +25,16 @@ class UI:
         satoshi = Wallet(self._Chain)
         alice = Wallet(self._Chain)
 
-        print("wallets created !")
+        print(":moneybag: wallets created ! :moneybag:")
 
         self._Wallet.sendCoins(10, satoshi._publicKey)
         satoshi.sendCoins(10, self._Wallet._publicKey)
         alice.sendCoins(10, self._Wallet._publicKey)
-        print("Transactions are pending !")
+        print(":credit_card: Transactions are pending ! :credit_card:")
         print(self._Chain._pendingTransactions)
 
         # Processing pending transactions
+        print(":pick: Mining pending transactions ! :pick:")
         self._Chain.minePending(satoshi._publicKey)
         print(self._Chain._pendingTransactions)
 
