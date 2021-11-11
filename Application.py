@@ -1,6 +1,6 @@
 from Wallet import Wallet
 from Chain import Chain
-from rich import print
+from P2P.p2p_network import *
 
 class UI:
 
@@ -39,6 +39,8 @@ class UI:
         print(self._Chain._pendingTransactions)
 
         self._Chain.print_chain()
+
+        #self._Chain.register_node()
 
         #print(self._Wallet.get_coins())
         

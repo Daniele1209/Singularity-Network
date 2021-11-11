@@ -3,6 +3,7 @@ from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from Crypto import Random
+from hashlib import sha256
 import binascii
 import hashlib
 from Transaction import Transaction
