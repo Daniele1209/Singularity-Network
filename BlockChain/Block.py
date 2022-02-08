@@ -3,7 +3,7 @@ import hashlib
 import math
 import random
 from hashlib import sha256
-from ecdsa.keys import VerifyingKey, BadSignatureError
+from  ecdsa.keys import VerifyingKey, BadSignatureError
 from ecdsa.curves import SECP256k1
 from base64 import b64decode
 
