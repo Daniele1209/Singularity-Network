@@ -4,5 +4,5 @@ env
 frontend/migrations
 
 # Keys
-PrivateKey.pem
-PublicKey.pem
+Keys
+*.pem

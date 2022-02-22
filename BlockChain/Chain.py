@@ -1,7 +1,7 @@
 import requests
 
 from BlockChain.Block import *
-from Transaction import Transaction
+from BlockChain.Transaction import Transaction
 from Crypto.Hash import SHA, MD5
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
@@ -70,7 +70,6 @@ class Chain:
         newChain = None;
 
         maxLength = len(self.chain)
-
         for node in neighbors:
             response = requests.get(f'http://{node}/chain')
 

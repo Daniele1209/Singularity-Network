@@ -1,4 +1,4 @@
-from Wallet.Wallet import Wallet
+from BlockChain.Wallet.Wallet import Wallet
 from Chain import Chain
 from P2P.p2p_network import *
 

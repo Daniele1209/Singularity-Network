@@ -2,11 +2,8 @@ import Crypto
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
-from Crypto import Random
-from hashlib import sha256
 import binascii
-import hashlib
-from Transaction import Transaction
+from BlockChain.Transaction import Transaction
 
 
 class Wallet:
@@ -32,9 +29,9 @@ class Wallet:
             "public_key": binascii.hexlify(public_key.exportKey(format='PEM')).decode('ascii')
         }
 
-        file_out = open("PrivateKey.pem", "wb")
+        file_out = open("Keys/PrivateKey.pem", "wb")
         file_out.write(private_key.export_key())
-        file_out = open("PublicKey.pem", "wb")
+        file_out = open("Keys/PublicKey.pem", "wb")
         file_out.write(public_key.export_key())
 
         self._privateKey = key_pair["private_key"]
