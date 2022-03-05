@@ -1,19 +1,33 @@
+from hashlib import sha256
+
 import Crypto
 from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 import binascii
+
+from ecdsa import SECP256k1
+
 from BlockChain.Transaction import Transaction
+from base64 import b64encode
+from ecdsa.keys import SigningKey
 
 
 class Wallet:
 
-    def __init__(self, chain):
+    def __init__(self, chain, name):
+        self.key_signature = SigningKey.generate(
+            curve=SECP256k1, hashfunc=sha256
+        )
         self._publicKey = None
         self._privateKey = None
         self.generateKeyPair()
         self._Chain = chain
         self._coin_count = 100
+        self._name = name
+
+    def set_name(self, new_name):
+        self._name = new_name
 
     # We use "RSA" encryption - use to encrypt and decrypt
     # Use public key to encrypt
@@ -29,9 +43,9 @@ class Wallet:
             "public_key": binascii.hexlify(public_key.exportKey(format='PEM')).decode('ascii')
         }
 
-        file_out = open("Keys/PrivateKey.pem", "wb")
+        file_out = open("Keys/" + self._name + "/PrivateKey.pem", "wb")
         file_out.write(private_key.export_key())
-        file_out = open("Keys/PublicKey.pem", "wb")
+        file_out = open("Keys/" + self._name + "/PublicKey.pem", "wb")
         file_out.write(public_key.export_key())
 
         self._privateKey = key_pair["private_key"]
@@ -50,6 +64,11 @@ class Wallet:
             self._coin_count -= amount
         else:
             raise binascii.Error("Insufficient balance !")
+
+    def sign(self, hash):
+        return b64encode(
+            self.key_signature.sign(hash.encode(), hashfunc=sha256)
+        ).decode()
 
     def get_public_key(self):
         return self._publicKey

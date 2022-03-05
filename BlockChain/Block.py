@@ -34,6 +34,9 @@ class Block:
     def get_nonce(self) -> object:
         return self._nonce
 
+    def get_transactions(self) -> list:
+        return self._transactions
+
     def sign_block(self, signature):
         self._signature = signature
 

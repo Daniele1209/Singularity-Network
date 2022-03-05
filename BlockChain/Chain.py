@@ -1,7 +1,12 @@
+from typing import List
+
 import requests
 
 from BlockChain.Block import *
 from BlockChain.Transaction import Transaction
+from Block_chooser import BlockChooser
+from Wallet.Wallet import Wallet
+
 from Crypto.Hash import SHA, MD5
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
@@ -11,23 +16,39 @@ import binascii
 class Chain:
 
     def __init__(self):
-        self._chain = []
-        self._pendingTransactions = []
+        self.chain: List[Block] = []
+        self.pendingTransactions: List[Transaction] = []
         self._blockSize = 10
         self._nodes = set()
+        self._wallets = List[Wallet]
         # Defining the first block in the chain
-        self.Genesis()
-        #User reward for mining
-        self._reward = 20
-    
-    def Genesis(self):
-        self.newBlock(0, 0, Transaction(1, "Genesis", "Viniele"))
+        self.genesis()
 
-    def newBlock(self, proof, previousHash, transaction):
-        block = Block(len(self._chain), proof, previousHash, transaction)
-        self._chain.append(block)
+        self.next_block_chooser = BlockChooser(self)
+        self.next_block_chooser.start()
 
-        return block
+    def get_wallet_addresses(self):
+        address_list = []
+        for wallet_idx in range(len(self._wallets)):
+            address_list.append(self._wallets[wallet_idx])
+        return address_list
+
+    # when we download and sync all the blockchain history
+    def sync_chain(self, current_chain):
+        self.chain = current_chain.chain
+        self.pendingTransactions = current_chain.pendingTransactions
+
+    def genesis(self):
+        self.new_block(0, 0, Transaction(1, "Genesis", "Viniele", 0))
+
+    # return data about a certain wallet, iterating through the chain
+    def get_wallet_data(self, wallet_address):
+        if wallet_address in self.get_wallet_addresses():
+            pass
+
+    def new_block(self, proof, previousHash, transaction):
+        block = Block(len(self.chain), proof, previousHash, transaction)
+        self.next_block_chooser.scan_block(block)
 
     # check that the signature corresponds to transaction
     # signed by the public key (sender_address)
@@ -37,8 +58,37 @@ class Chain:
         _hash = SHA.new(transaction.toString().encode('utf8'))
 
         if verifier.verify(_hash, binascii.unhexlify(signature)):
-            self._pendingTransactions.append(transaction)
+            self.pendingTransactions.append(transaction)
 
+    # used in order to update the chain state when new block data occurs
+    def process_block(self, block):
+        pass
+
+    # iterate through the blockchain, get each block and find the
+    # user transactions so that you can determine his balance
+    def getWalletBalance(self, wallet):
+        total = 0
+        for block_idx in range(0, len(self.chain)):
+            for current_trans in self.chain[block_idx].get_transactions():
+                if current_trans.get_payer() == wallet:
+                    total -= current_trans.get_amount()
+                if current_trans.get_payee() == wallet:
+                    total += current_trans.get_amount()
+
+        return total
+
+    def unsigned_transaction(self, payer_address):
+        pass
+
+    def block_validator(self, block):
+
+
+    # return latest block
+    @property
+    def _last_block(self):
+        return self.chain[-1]
+
+    """
     # get transactions from list of pending transactions and process them
     def minePending(self, miner):
         if len(self._pendingTransactions) <= 0:
@@ -98,19 +148,6 @@ class Chain:
 
         if prevBlock.getHash != block.previousHash:
             return False
-
-    # itereate through the blockchain and find the user transactions so that you can determine
-    # his balance
-    def getWalletBalance(self, wallet):
-        total = 0
-        for block in self._chain:
-            if block._transaction._payer == wallet:
-                total -= block._transaction._amount
-            if block._transaction._payee == wallet:
-                total += block._transaction._amount
-            
-        return total
-
         
     def mine(self, nonce):
         solution = 1
@@ -134,6 +171,6 @@ class Chain:
     def print_chain(self):
         for block in self._chain:
             print(block)
-
+    """
 
     
