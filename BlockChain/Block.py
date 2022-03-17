@@ -3,9 +3,10 @@ import hashlib
 import math
 import random
 from hashlib import sha256
-from  ecdsa.keys import VerifyingKey, BadSignatureError
+from ecdsa.keys import VerifyingKey, BadSignatureError
 from ecdsa.curves import SECP256k1
 from base64 import b64decode
+import copy
 
 class Block:
 
@@ -16,8 +17,6 @@ class Block:
         self._timeStamp = time.time()
         self._forger = forger
         self._signature = signature
-        # used for the proof of work system
-        self._nonce = math.floor(random.random() * 999999999)
 
     # Getters
     def get_index(self):
@@ -44,13 +43,6 @@ class Block:
                                             [tr.toString() for tr in self._transactions])
         return hashlib.sha256(StringToBlock.encode()).hexdigest()
 
-    @property
-    def nonce(self) -> object:
-        return self._nonce
-
-    def get_nonce(self) -> object:
-        return self._nonce
-
     def get_transactions(self) -> list:
         return self._transactions
 
@@ -69,6 +61,25 @@ class Block:
         except BadSignatureError:
             return False
         return True
+
+    def payload(self):
+        json_representation = copy.deepcopy(self.toJson())
+        json_representation['signature'] = ''
+        return json_representation
+
+    def toJson(self):
+        data = {}
+        data['index'] = self._index
+        data['previousHash'] = self._previousHash
+        transactions = []
+        for trans in self._transactions:
+            transactions.append(trans.toJson)
+        data['transactions'] = transactions
+        data['timeStamp'] = self._timeStamp
+        data['forger'] = self._forger
+        data['signature'] = self._signature
+        return data
+
 
     def __repr__(self) -> str:
         return "{} - {} - {} - {}".format(self._index, self._previousHash, self._transactions, self._timeStamp)

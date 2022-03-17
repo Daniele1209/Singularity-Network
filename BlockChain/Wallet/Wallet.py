@@ -8,6 +8,8 @@ import binascii
 
 from ecdsa import SECP256k1
 
+import Utils
+
 from BlockChain.Block import Block
 from BlockChain.Transaction import Transaction
 from base64 import b64encode
@@ -23,7 +25,6 @@ class Wallet:
         self._publicKey = None
         self._privateKey = None
         self.generateKeyPair()
-        self._Chain = chain
         self._coin_count = 100
         self._name = name
 
@@ -70,10 +71,25 @@ class Wallet:
         else:
             raise binascii.Error("Insufficient balance !")
 
-    def sign(self, hash):
-        return b64encode(
-            self.key_signature.sign(hash.encode(), hashfunc=sha256)
-        ).decode()
+    # TODO
+    def createTransaction(self):
+        pass
+
+    def createBlock(self, index, transactions, lastHash):
+        block = Block(index, lastHash, transactions, self._publicKey)
+        signature = self.sign(block.payload())
+        block.sign_block(signature)
+        return block
+
+    def createTransaction(self, ):
+        transaction = Transaction()
+
+    def sign(self, data):
+        hash_data = Utils.hash(data)
+        private_key_rsa = RSA.importKey(self._privateKey)
+        signature_object = PKCS1_v1_5.new(private_key_rsa)
+        signature = signature_object.sign(hash_data)
+        return signature.hex()
 
     @staticmethod
     def toJson(self):
