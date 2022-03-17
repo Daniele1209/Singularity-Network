@@ -8,6 +8,7 @@ import binascii
 
 from ecdsa import SECP256k1
 
+from BlockChain.Block import Block
 from BlockChain.Transaction import Transaction
 from base64 import b64encode
 from ecdsa.keys import SigningKey
@@ -25,6 +26,12 @@ class Wallet:
         self._Chain = chain
         self._coin_count = 100
         self._name = name
+
+    def get_public_key(self):
+        return self._publicKey
+
+    def get_coins(self):
+        return self._coin_count
 
     def set_name(self, new_name):
         self._name = new_name
@@ -51,16 +58,14 @@ class Wallet:
         self._privateKey = key_pair["private_key"]
         self._publicKey = key_pair["public_key"]
 
-    def sendCoins(self, amount, payeePublicKey):
-        if self._coin_count - amount >= 0:
-            executedTransaction = Transaction(amount, self._publicKey, payeePublicKey)
+    def sendCoins(self, amount, payeePublicKey, fee):
+        if self._coin_count - (amount + fee) >= 0:
+            executedTransaction = Transaction(amount, self._publicKey, payeePublicKey, fee)
 
             private_key = RSA.importKey(binascii.unhexlify(self._privateKey))
             signer = PKCS1_v1_5.new(private_key)
             _hash = SHA.new(executedTransaction.toString().encode('utf8'))
             signature = binascii.hexlify(signer.sign(_hash)).decode('ascii')
-
-            self._Chain.addBlock(self._publicKey, signature, executedTransaction)
             self._coin_count -= amount
         else:
             raise binascii.Error("Insufficient balance !")
@@ -70,8 +75,6 @@ class Wallet:
             self.key_signature.sign(hash.encode(), hashfunc=sha256)
         ).decode()
 
-    def get_public_key(self):
-        return self._publicKey
-
-    def get_coins(self):
-        return self._coin_count
+    @staticmethod
+    def toJson(self):
+        return self.__dict__

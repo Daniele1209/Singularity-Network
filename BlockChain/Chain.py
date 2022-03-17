@@ -2,6 +2,9 @@ from typing import List
 
 import requests
 
+from Exceptions import *
+from Config import genesis_dev_address, block_size, minimum_fee
+
 from BlockChain.Block import *
 from BlockChain.Transaction import Transaction
 from Block_chooser import BlockChooser
@@ -18,11 +21,12 @@ class Chain:
     def __init__(self):
         self.chain: List[Block] = []
         self.pendingTransactions: List[Transaction] = []
-        self._blockSize = 10
+        self._blockSize = block_size
         self._nodes = set()
+        self._minimum_fee = minimum_fee
         self._wallets = List[Wallet]
         # Defining the first block in the chain
-        self.genesis()
+        self.genesis_hash = self.genesis()
 
         self.next_block_chooser = BlockChooser(self)
         self.next_block_chooser.start()
@@ -39,16 +43,29 @@ class Chain:
         self.pendingTransactions = current_chain.pendingTransactions
 
     def genesis(self):
-        self.new_block(0, 0, Transaction(1, "Genesis", "Viniele", 0))
+        block_to_add = Block(index=0, previousHash=0, transactions=[Transaction(1, "Genesis", "Viniele", 0)],
+                             forger=genesis_dev_address)
+        self.new_block(block_to_add)
+        return block_to_add.getHash
+
+    def insert_wallet(self, wallet):
+        self._wallets.append(wallet)
 
     # return data about a certain wallet, iterating through the chain
     def get_wallet_data(self, wallet_address):
-        if wallet_address in self.get_wallet_addresses():
-            pass
+        wallet_list = self.get_wallet_addresses()
+        if wallet_address in wallet_list:
+            for wallet_idx in range(0, len(wallet_list)):
+                if wallet_list[wallet_idx].get_public_key() == wallet_address:
+                    return wallet_list[wallet_idx].toJson
 
-    def new_block(self, proof, previousHash, transaction):
-        block = Block(len(self.chain), proof, previousHash, transaction)
+    def new_block(self, block):
         self.next_block_chooser.scan_block(block)
+
+    # used each time a block is added to the chain
+    # refresh the state of the chain
+    def insert_block_in_chain(self, block):
+        pass
 
     # check that the signature corresponds to transaction
     # signed by the public key (sender_address)
@@ -60,9 +77,21 @@ class Chain:
         if verifier.verify(_hash, binascii.unhexlify(signature)):
             self.pendingTransactions.append(transaction)
 
+    def push_block(self, block):
+        self.chain.append(block)
+        self.pendingTransactions.clear()
+
     # used in order to update the chain state when new block data occurs
     def process_block(self, block):
-        pass
+        fees = 0.0
+        if self.block_validation(block):
+            for transaction in block.get_transactions:
+                fees += transaction.get_fee()
+            self.push_block(block)
+            reward_transaction = self.unsigned_transaction(fees, genesis_dev_address,
+                                                           block.get_forger(), fee=minimum_fee, type='REWARD')
+            self.pendingTransactions.append(reward_transaction)
+        return True
 
     # iterate through the blockchain, get each block and find the
     # user transactions so that you can determine his balance
@@ -77,10 +106,46 @@ class Chain:
 
         return total
 
-    def unsigned_transaction(self, payer_address):
-        pass
+    # creates unsigned transaction object
+    def unsigned_transaction(self, amount, payer_address, payee_address, fee, type):
+        built_transaction = Transaction(
+            amount=amount,
+            payer=payer_address,
+            payee=payee_address,
+            fee=fee,
+            type=type
+        )
+        return built_transaction
 
-    def block_validator(self, block):
+    # used in order to check the integrity of the wanted block
+    # checking: index, signature, transaction count
+    def block_validation(self, block):
+        # check if the block to be verified is the genesis one
+        if block.get_index() == 0:
+            if block.getHash == self.genesis_hash:
+                raise BlockValidationError('Block hash invalid ! Same as genesis')
+        if block.get_index() != self._last_block.get_index() + 1:
+            raise BlockValidationError('Block index does not belong to the sequence')
+        if not block.check_verified:
+            raise BlockValidationError('Invalid signature !')
+        if len(block.get_transactions()) > block_size:
+            raise BlockValidationError('Transaction number exceeds the max !')
+
+        return True
+
+    # used in order to check if the transaction parameters are in order
+    # checking: signature, amount, fee, payer/payee
+    def transaction_validation(self, transaction):
+        if not transaction.signed():
+            raise TransactionValidationError('Transaction signature not valid !')
+        if transaction.get_amount() < 0:
+            raise TransactionValidationError('Transaction amount too low !')
+        if transaction.get_fee() < self._minimum_fee:
+            raise TransactionValidationError('Fee lower than minimum !')
+        if transaction.get_payee() == transaction.get_payee():
+            raise TransactionValidationError('Transaction payer is the same as payee !')
+
+        return True
 
 
     # return latest block

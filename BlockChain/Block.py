@@ -19,12 +19,29 @@ class Block:
         # used for the proof of work system
         self._nonce = math.floor(random.random() * 999999999)
 
+    # Getters
+    def get_index(self):
+        return self._index
+
+    def get_prevHash(self):
+        return self._previousHash
+
+    def get_timeStamp(self):
+        return self._timeStamp
+
+    def get_forger(self):
+        return self._forger
+
+    def get_signature(self):
+        return self._signature
+
     """
     Hash built using the block parameters
     """
     @property
     def getHash(self) -> object:
-        StringToBlock = "{}{}{}".format(self._index, self._previousHash, self._timeStamp)
+        StringToBlock = "{}{}{}{}{}".format(self._index, self._previousHash, self._timeStamp, self._forger,
+                                            [tr.toString() for tr in self._transactions])
         return hashlib.sha256(StringToBlock.encode()).hexdigest()
 
     @property
