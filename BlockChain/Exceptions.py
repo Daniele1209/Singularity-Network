@@ -1,6 +1,6 @@
-
 class ChainException(Exception):
     pass
+
 
 class Error(ChainException):
     def __init__(self, msg: str = None, **kwargs):
@@ -10,11 +10,18 @@ class Error(ChainException):
     def __str__(self):
         return f"Message: {self.msg}, Arguments: {self.kwargs}"
 
+
 class TransactionValidationError(Error):
     pass
+
 
 class BlockValidationError(Error):
     pass
 
+
 class BlockProcessingError(Error):
+    pass
+
+
+class AccountModelError(Error):
     pass

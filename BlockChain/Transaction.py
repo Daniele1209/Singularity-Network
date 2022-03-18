@@ -1,3 +1,4 @@
+import copy
 import hashlib
 import time
 
@@ -31,8 +32,16 @@ class Transaction:
         else:
             return False
 
+    def sign_transaction(self, signature):
+        self._signature = signature
+
     def toString(self):
         return str(self._amount) + " " + str(self._payer) + " " + str(self._payee) + " " + str(self._time)
+
+    def payload(self):
+        json_representation = copy.deepcopy(self.toJson())
+        json_representation['signature'] = ''
+        return json_representation
 
     @staticmethod
     def equals(self, transaction):
@@ -40,6 +49,13 @@ class Transaction:
             return True
         return False
 
-    @staticmethod
     def toJson(self):
-        return self.__dict__
+        data = {}
+        data['amount'] = self._amount
+        data['payer'] = self._payer
+        data['payee'] = self._payee
+        data['fee'] = self._fee
+        data['type'] = self._type
+        data['time'] = self._time
+        data['signature'] = self._signature
+        return data

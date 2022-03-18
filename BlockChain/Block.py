@@ -8,7 +8,7 @@ from ecdsa.curves import SECP256k1
 from base64 import b64decode
 import copy
 
-class Block:
+class Block():
 
     def __init__(self, index, previousHash, transactions: list, forger, signature=None):
         self._index = index
@@ -73,15 +73,20 @@ class Block:
         data['previousHash'] = self._previousHash
         transactions = []
         for trans in self._transactions:
-            transactions.append(trans.toJson)
+            transactions.append(trans.toJson())
         data['transactions'] = transactions
         data['timeStamp'] = self._timeStamp
         data['forger'] = self._forger
         data['signature'] = self._signature
         return data
 
+    @staticmethod
+    def equals(self, block):
+        if self.toJson() == block.toJson():
+            return True
+        return False
 
     def __repr__(self) -> str:
-        return "{} - {} - {} - {}".format(self._index, self._previousHash, self._transactions, self._timeStamp)
+        return "{} - {} - {} - {}".format(self._index, self._previousHash, self._transactions.__repr__(), self._timeStamp)
 
 
