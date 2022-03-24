@@ -76,5 +76,17 @@ class Wallet():
         signature = signature_object.sign(hash_data)
         return signature.hex()
 
+    """
+    Check if the signature is verified or not
+    """
+    @staticmethod
+    def check_verified(data, signature, public_key):
+        signature = bytes.fromhex(signature)
+        hash_data = Utils.hash(data)
+        publicKey = RSA.importKey(public_key)
+        signatureSchemeObject = PKCS1_v1_5.new(publicKey)
+        signatureValid = signatureSchemeObject.verify(hash_data, signature)
+        return signatureValid
+
     def toJson(self):
         return self.__dict__

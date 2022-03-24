@@ -77,10 +77,12 @@ class Chain():
                     self.pendingTransactions.remove(pool_transaction)
 
     def push_block(self, block):
-        self.execute_transactions(block.get_transactions())
-        self.chain.append(block)
-        self.remove_transactions(block.get_transactions())
-        return True
+        if self.block_validation(block):
+            self.execute_transactions(block.get_transactions())
+            self.chain.append(block)
+            self.remove_transactions(block.get_transactions())
+            return True
+        return False
 
     # used in order to update the chain state when new block data occurs
     def process_block(self, block):
@@ -89,6 +91,7 @@ class Chain():
             for transaction in block.get_transactions():
                 fees += transaction.get_fee()
             self.push_block(block)
+            self.remove_transactions(block.get_transactions())
             reward_transaction = self.unsigned_transaction(fees, genesis_dev_address,
                                                            block.get_forger(), fee=minimum_fee, type='REWARD')
             self.pendingTransactions.append(reward_transaction)
@@ -140,7 +143,7 @@ class Chain():
                 raise BlockValidationError('Block hash invalid ! Same as genesis')
         if block.get_index() != self._last_block.get_index() + 1:
             raise BlockValidationError('Block index does not belong to the sequence')
-        if not block.check_verified:
+        if not block.check_verified(block.payload(), block.get_signature(), block.get_forger()):
             raise BlockValidationError('Invalid signature !')
         if len(block.get_transactions()) > block_size:
             raise BlockValidationError('Transaction number exceeds the max !')
@@ -157,19 +160,24 @@ class Chain():
         sender_balance = self.account_model.get_balance(transaction.get_payer())
         if sender_balance < transaction.get_amount() + transaction.get_fee():
             raise TransactionValidationError('Invalid balance !')
-        if not transaction.signed():
+        if not transaction.check_verified(transaction.payload(), transaction.get_signature(), transaction.get_payer()):
             raise TransactionValidationError('Transaction signature not valid !')
         if transaction.get_amount() < 0:
             raise TransactionValidationError('Transaction amount too low !')
         if transaction.get_fee() < self._minimum_fee:
             raise TransactionValidationError('Fee lower than minimum !')
-        if transaction.get_payee() == transaction.get_payee():
+        if transaction.get_payer() == transaction.get_payee():
             raise TransactionValidationError('Transaction payer is the same as payee !')
 
         return True
 
     def last_index(self):
         return self._last_block.get_index()
+
+    def check_account_at_address(self, address):
+        if address in self.account_model.get_accounts():
+            return True
+        return False
 
     # return latest block
     @property

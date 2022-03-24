@@ -1,12 +1,20 @@
+import binascii
 import time
 import hashlib
 import math
 import random
 from hashlib import sha256
+
+from Crypto.Hash import SHA256
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
 from ecdsa.keys import VerifyingKey, BadSignatureError
 from ecdsa.curves import SECP256k1
 from base64 import b64decode
 import copy
+
+import Utils
+
 
 class Block():
 
@@ -50,17 +58,20 @@ class Block():
         self._signature = signature
 
     """
-    Check if the signature is verified or not
-    return True if it is and False otherwise
+    Verifies with a public key from whom the data came that it was indeed 
+    signed by their private key
+    param: public_key_loc Path to public key
+    param: signature String signature to be verified
     """
     @staticmethod
-    def check_verified(self) -> bool:
-        key_to_verify = VerifyingKey.from_string(b64decode(self._forger), curve=SECP256k1, hashfunc=sha256)
-        try:
-            key_to_verify.verify(b64decode(self._signature), self.getHash(), hashfunc=sha256)
-        except BadSignatureError:
-            return False
-        return True
+    def check_verified(data, signature, public_key):
+        signature = bytes.fromhex(signature)
+        data_hash = Utils.hash(data)
+        publicKey = RSA.importKey(binascii.unhexlify(public_key))
+        signatureSchemeObject = PKCS1_v1_5.new(publicKey)
+        if signatureSchemeObject.verify(data_hash, signature):
+            return True
+        return False
 
     def payload(self):
         json_representation = copy.deepcopy(self.toJson())

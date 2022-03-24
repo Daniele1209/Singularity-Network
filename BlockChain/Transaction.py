@@ -1,6 +1,13 @@
+import binascii
 import copy
 import hashlib
 import time
+
+from Crypto.PublicKey import RSA
+from Crypto.Signature import PKCS1_v1_5
+
+import Utils
+
 
 class Transaction:
 
@@ -23,6 +30,9 @@ class Transaction:
     def get_amount(self):
         return self._amount
 
+    def get_signature(self):
+        return self._signature
+
     def get_fee(self):
         return self._fee
 
@@ -35,6 +45,23 @@ class Transaction:
     def sign_transaction(self, signature):
         self._signature = signature
 
+    """
+    Verifies with a public key from whom the data came that it was indeed 
+    signed by their private key
+    param: public_key_loc Path to public key
+    param: signature String signature to be verified
+    """
+    @staticmethod
+    def check_verified(data, signature, public_key):
+        signature = bytes.fromhex(signature)
+        data_hash = Utils.hash(data)
+        publicKey = RSA.importKey(binascii.unhexlify(public_key))
+        signatureSchemeObject = PKCS1_v1_5.new(publicKey)
+        if signatureSchemeObject.verify(data_hash, signature):
+            return True
+        return False
+
+
     def toString(self):
         return str(self._amount) + " " + str(self._payer) + " " + str(self._payee) + " " + str(self._time)
 
@@ -43,7 +70,6 @@ class Transaction:
         json_representation['signature'] = ''
         return json_representation
 
-    @staticmethod
     def equals(self, transaction):
         if transaction.toJson() == self.toJson():
             return True
