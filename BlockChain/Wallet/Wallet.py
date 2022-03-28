@@ -19,9 +19,6 @@ from ecdsa.keys import SigningKey
 class Wallet():
 
     def __init__(self, name='#', write=True):
-        self.key_signature = SigningKey.generate(
-            curve=SECP256k1, hashfunc=sha256
-        )
         self._publicKey = None
         self._privateKey = None
         self._name = name
@@ -49,9 +46,9 @@ class Wallet():
         }
 
         if self.write:
-            file_out = open("Keys/" + self._name + "_PrivateKey.pem", "wb")
+            file_out = open("../Keys/" + self._name + "_PrivateKey.pem", "wb")
             file_out.write(private_key.export_key())
-            file_out = open("Keys/" + self._name + "_PublicKey.pem", "wb")
+            file_out = open("../Keys/" + self._name + "_PublicKey.pem", "wb")
             file_out.write(public_key.export_key())
 
         self._privateKey = key_pair["private_key"]
