@@ -1,16 +1,9 @@
 import binascii
 import time
 import hashlib
-import math
-import random
-from hashlib import sha256
 
-from Crypto.Hash import SHA256
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
-from ecdsa.keys import VerifyingKey, BadSignatureError
-from ecdsa.curves import SECP256k1
-from base64 import b64decode
 import copy
 
 import Utils

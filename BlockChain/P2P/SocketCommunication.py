@@ -8,3 +8,9 @@ class SocketCommunication(Node):
     # Open the port
     def startSocketCommunication(self):
         self.start()
+
+    def inbound_node_connected(self, node):
+        print('Inbound connection')
+
+    def outbound_node_connected(self, node):
+        print('Outbound connection')

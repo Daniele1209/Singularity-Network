@@ -1,4 +1,4 @@
-from BlockChain.Exceptions import AccountModelError
+from Exceptions import AccountModelError
 
 
 class AccountModel:

@@ -6,5 +6,6 @@ from .Account_model import AccountModel
 from .Block_chooser import BlockChooser
 from .Block import Block
 from .Node import Node
+import Utils
 
-__all__ = [BlockChain, Chain, Transaction, Wallet, AccountModel, BlockChooser, Block, Node]
+__all__ = [BlockChain, Chain, Transaction, Wallet, AccountModel, BlockChooser, Block, Node, Utils]

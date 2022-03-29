@@ -1,6 +1,5 @@
 import binascii
 import copy
-import hashlib
 import time
 
 from Crypto.PublicKey import RSA

@@ -1,6 +1,6 @@
-from BlockChain.Chain import Chain
-from BlockChain.Wallet.Wallet import Wallet
-from BlockChain.P2P.SocketCommunication import SocketCommunication
+from Chain import Chain
+from Wallet.Wallet import Wallet
+from P2P.SocketCommunication import SocketCommunication
 
 class Node():
     def __init__(self, ip, port):

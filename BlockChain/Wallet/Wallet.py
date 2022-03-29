@@ -1,19 +1,12 @@
-from hashlib import sha256
-
 import Crypto
-from Crypto.Hash import SHA
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 import binascii
 
-from ecdsa import SECP256k1
-
 import Utils
 
-from BlockChain.Block import Block
-from BlockChain.Transaction import Transaction
-from base64 import b64encode
-from ecdsa.keys import SigningKey
+from Block import Block
+from Transaction import Transaction
 
 
 class Wallet():

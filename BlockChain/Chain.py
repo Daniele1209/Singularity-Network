@@ -2,19 +2,19 @@ from typing import List
 
 import requests
 
-from BlockChain.Exceptions import (
+from Exceptions import (
 TransactionValidationError,
 BlockValidationError,
 BlockProcessingError,
 AccountModelError
 )
-from BlockChain.Config import genesis_dev_address, block_size, minimum_fee
+from Config import genesis_dev_address, block_size, minimum_fee
 
-from BlockChain.Block import *
-from BlockChain.Transaction import Transaction
-from BlockChain.Block_chooser import BlockChooser
-from BlockChain.Wallet.Wallet import Wallet
-from BlockChain.Account_model import AccountModel
+from Block import *
+from Transaction import Transaction
+from Block_chooser import BlockChooser
+from Wallet.Wallet import Wallet
+from Account_model import AccountModel
 
 from Crypto.Hash import SHA, MD5
 from Crypto.PublicKey import RSA

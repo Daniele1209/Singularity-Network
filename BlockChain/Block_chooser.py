@@ -1,7 +1,7 @@
 from queue import Queue
 from threading import Thread
 
-from BlockChain.Block import *
+from Block import *
 
 class BlockChooser(Thread):
     def __init__(self, blockchain):
