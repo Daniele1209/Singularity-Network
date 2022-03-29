@@ -5,8 +5,6 @@ from Chain import Chain
 from Node import Node
 from pyfiglet import Figlet, figlet_format
 
-import emoji
-
 
 class UI:
 
@@ -35,10 +33,10 @@ class UI:
 
         print("💰 wallets created ! 💰")
 
-        print(emoji.emojize(":credit_card: Transactions are pending ! :credit_card:"))
+        print("💳 Transactions are pending ! 💳")
 
         # Processing pending transactions
-        print(emoji.emojize(":pick: Node working ... :pick:"))
+        print("⛏️ Node working ... ⛏️")
 
 
 ui = UI()
