@@ -2,16 +2,16 @@ import Crypto
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 import binascii
+import sys
 
-import Utils
+from Utils import hash, encode, decode
 
 from Block import Block
 from Transaction import Transaction
 
 
-class Wallet():
-
-    def __init__(self, name='#', write=True):
+class Wallet:
+    def __init__(self, name="#", write=True):
         self._publicKey = None
         self._privateKey = None
         self._name = name
@@ -24,6 +24,19 @@ class Wallet():
     def set_name(self, new_name):
         self._name = new_name
 
+    # Generate wallet based on key pair
+    def generateFromPair(self, file_public, file_private):
+        with open(file_public, "r") as public_file:
+            public_key = RSA.importKey(public_file.read())
+
+        with open(file_private, "r") as private_file:
+            private_key = RSA.importKey(private_file.read())
+        try:
+            self._publicKey = public_key
+            self._privateKey = private_key
+        except:
+            raise Exception("Wallet key import filed !")
+
     # We use "RSA" encryption - use to encrypt and decrypt
     # Use public key to encrypt
     # Use private key to decrypt
@@ -34,8 +47,12 @@ class Wallet():
         private_key = RSA.generate(2048, random_gen)
         public_key = private_key.publickey()
         key_pair = {
-            "private_key": binascii.hexlify(private_key.exportKey(format='PEM')).decode('ascii'),
-            "public_key": binascii.hexlify(public_key.exportKey(format='PEM')).decode('ascii')
+            "private_key": binascii.hexlify(private_key.exportKey(format="PEM")).decode(
+                "ascii"
+            ),
+            "public_key": binascii.hexlify(public_key.exportKey(format="PEM")).decode(
+                "ascii"
+            ),
         }
 
         if self.write:
@@ -53,30 +70,35 @@ class Wallet():
         block.sign_block(signature)
         return block
 
-    def createTransaction(self, amount, receiver, fee, type='TRANSFER'):
+    def createTransaction(self, amount, receiver, fee, type="TRANSFER"):
         transaction = Transaction(amount, self._publicKey, receiver, fee, type)
         signature = self.sign(transaction.payload())
         transaction.sign_transaction(signature)
         return transaction
 
     def sign(self, data):
-        hash_data = Utils.hash(data)
+        hash_data = hash(data)
         private_key_rsa = RSA.importKey(binascii.unhexlify(self._privateKey))
         signature_object = PKCS1_v1_5.new(private_key_rsa)
         signature = signature_object.sign(hash_data)
         return signature.hex()
 
     """
-    Check if the signature is verified or not
+    Verifies with a public key from whom the data came that it was indeed 
+    signed by their private key
+    param: public_key_loc Path to public key
+    param: signature String signature to be verified
     """
+
     @staticmethod
     def check_verified(data, signature, public_key):
         signature = bytes.fromhex(signature)
-        hash_data = Utils.hash(data)
-        publicKey = RSA.importKey(public_key)
+        data_hash = hash(data)
+        publicKey = RSA.importKey(binascii.unhexlify(public_key))
         signatureSchemeObject = PKCS1_v1_5.new(publicKey)
-        signatureValid = signatureSchemeObject.verify(hash_data, signature)
-        return signatureValid
+        if signatureSchemeObject.verify(data_hash, signature):
+            return True
+        return False
 
     def toJson(self):
         return self.__dict__

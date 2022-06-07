@@ -2,7 +2,7 @@
 import time
 import threading
 
-from P2P.Message import Message
+from .Message import Message
 import Utils as Utls
 
 # Sub-module of Socket Communication

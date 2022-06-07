@@ -1,9 +1,9 @@
 from p2pnetwork.node import Node
 import json
 
-from P2P.SocketConnector import SocketConnector
-from P2P.PeerDiscoveryHandler import PeerDiscoveryHandler
-from P2P.SocketConnector import SocketConnector
+from .SocketConnector import SocketConnector
+from .PeerDiscoveryHandler import PeerDiscoveryHandler
+from .SocketConnector import SocketConnector
 import Utils as Utls
 
 class SocketCommunication(Node):
@@ -15,7 +15,8 @@ class SocketCommunication(Node):
         self.socketConnector = SocketConnector(ip, port)
 
     # Open the port
-    def startSocketCommunication(self):
+    def startSocketCommunication(self, node):
+        self.node = node
         self.start()
         self.peerDiscoveryHandler.start()
         self.connect_originNode()
@@ -34,6 +35,9 @@ class SocketCommunication(Node):
         message = Utls.decode(json.dumps(data))
         if message.message_type == 'DISCOVERY':
             self.peerDiscoveryHandler.handle_message(message)
+        elif message.message_type == 'TRANSACTION':
+            transaction = message.data
+            self.node.handleTransaction(transaction)
 
     def send(self, receiver, data):
         self.send_to_node(receiver, data)

@@ -25,3 +25,6 @@ class BlockProcessingError(Error):
 
 class AccountModelError(Error):
     pass
+
+class APIError(Error):
+    pass

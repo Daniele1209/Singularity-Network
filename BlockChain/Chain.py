@@ -2,19 +2,24 @@ from typing import List
 
 import requests
 
+
 from Exceptions import (
-TransactionValidationError,
-BlockValidationError,
-BlockProcessingError,
-AccountModelError
+    TransactionValidationError,
+    BlockValidationError,
+    BlockProcessingError,
+    AccountModelError,
 )
 from Config import genesis_dev_address, block_size, minimum_fee
+
+from Message import Message
 
 from Block import *
 from Transaction import Transaction
 from Block_chooser import BlockChooser
 from Wallet.Wallet import Wallet
 from Account_model import AccountModel
+from .Consensus.Proof_of_stake import ProofOfStake
+import Utils
 
 from Crypto.Hash import SHA, MD5
 from Crypto.PublicKey import RSA
@@ -22,8 +27,8 @@ from Crypto.Signature import PKCS1_v1_5
 from urllib.parse import urlparse
 import binascii
 
-class Chain():
 
+class Chain:
     def __init__(self):
         self.chain: List[Block] = []
         self.pendingTransactions: List[Transaction] = []
@@ -33,8 +38,9 @@ class Chain():
         self.genesis_hash = self.genesis()
 
         self.account_model = AccountModel()
-        #self.next_block_chooser = BlockChooser(self)
-        #self.next_block_chooser.start()
+        # self.next_block_chooser = BlockChooser(self)
+        # self.next_block_chooser.start()
+        self.pos = ProofOfStake()
 
     # when we download and sync all the blockchain history
     def sync_chain(self, current_chain):
@@ -42,8 +48,12 @@ class Chain():
         self.pendingTransactions = current_chain.pendingTransactions
 
     def genesis(self):
-        block_to_add = Block(index=0, previousHash=0, transactions=[Transaction(1, "Genesis", "Viniele", 0)],
-                             forger=genesis_dev_address)
+        block_to_add = Block(
+            index=0,
+            previousHash=0,
+            transactions=[Transaction(1, "Genesis", "Viniele", 0)],
+            forger=genesis_dev_address,
+        )
         self.chain.append(block_to_add)
         return block_to_add.getHash
 
@@ -54,6 +64,9 @@ class Chain():
     def get_wallet_data(self, wallet_address):
         if wallet_address in self.account_model.get_accounts():
             return self.account_model.get_balance(wallet_address)
+
+    def get_last_hash(self):
+        return Utils.hash(self._last_block.payload()).hexdigest()
 
     # def new_block(self, block):
     #     self.next_block_chooser.scan_block(block)
@@ -69,6 +82,19 @@ class Chain():
         if verifier.verify(_hash, binascii.unhexlify(signature)):
             self.pendingTransactions.append(transaction)
     """
+
+    def insert_transaction(self, transaction):
+        # check transaction signature
+        signature_valid = self.transaction_validation(transaction)
+        # check if transaction already exists
+        transaction_exists = self.check_transaction(transaction)
+
+        if signature_valid and transaction_exists:
+            self.pendingTransactions.append(transaction)
+        else:
+            raise TransactionValidationError(
+                "Transaction signature not valid or already existing !"
+            )
 
     def remove_transactions(self, transactions):
         for transaction in transactions:
@@ -92,8 +118,13 @@ class Chain():
                 fees += transaction.get_fee()
             self.push_block(block)
             self.remove_transactions(block.get_transactions())
-            reward_transaction = self.unsigned_transaction(fees, genesis_dev_address,
-                                                           block.get_forger(), fee=minimum_fee, type='REWARD')
+            reward_transaction = self.unsigned_transaction(
+                fees,
+                genesis_dev_address,
+                block.get_forger(),
+                fee=minimum_fee,
+                type="REWARD",
+            )
             self.pendingTransactions.append(reward_transaction)
         return True
 
@@ -115,24 +146,38 @@ class Chain():
         receiver_account = transaction.get_payee()
         amount = transaction.get_amount()
         fee = transaction.get_fee()
-        self.account_model.balance_update(sender_account, -(amount+fee))
+        self.account_model.balance_update(sender_account, -(amount + fee))
         self.account_model.balance_update(receiver_account, amount)
 
     def execute_transactions(self, transactions):
         for transaction in transactions:
             self.execute_transaction(transaction)
 
+    # checks if a certain transaction already exists
+    def check_transaction(self, transaction):
+        for trans in self.pendingTransactions:
+            if transaction.equals(trans):
+                return False
+        return True
 
     # creates unsigned transaction object
     def unsigned_transaction(self, amount, payer_address, payee_address, fee, type):
         built_transaction = Transaction(
-            amount=amount,
-            payer=payer_address,
-            payee=payee_address,
-            fee=fee,
-            type=type
+            amount=amount, payer=payer_address, payee=payee_address, fee=fee, type=type
         )
         return built_transaction
+
+    # check if a certain amount of transactions have been reached in the pool
+    # this signals if the time for a new forger has come
+    def forger_required(self):
+        if len(self.pendingTransactions) >= self._blockSize:
+            return True
+        return False
+
+    def choose_forger(self):
+        last_block_hash = self.get_last_hash()
+        next_forger = self.pos.selectForger(last_block_hash)
+        return next_forger
 
     # used in order to check the integrity of the wanted block
     # checking: index, signature, transaction count
@@ -140,17 +185,21 @@ class Chain():
         # check if the block to be verified is the genesis one
         if block.get_index() == 0:
             if block.getHash == self.genesis_hash:
-                raise BlockValidationError('Block hash invalid ! Same as genesis')
+                raise BlockValidationError("Block hash invalid ! Same as genesis")
         if block.get_index() != self._last_block.get_index() + 1:
-            raise BlockValidationError('Block index does not belong to the sequence')
-        if not block.check_verified(block.payload(), block.get_signature(), block.get_forger()):
-            raise BlockValidationError('Invalid signature !')
+            raise BlockValidationError("Block index does not belong to the sequence")
+        if not block.check_verified(
+            block.payload(), block.get_signature(), block.get_forger()
+        ):
+            raise BlockValidationError("Invalid signature !")
         if len(block.get_transactions()) > block_size:
-            raise BlockValidationError('Transaction number exceeds the max !')
+            raise BlockValidationError("Transaction number exceeds the max !")
         # check if all transactions in block are valid
         for transaction in block.get_transactions():
             if not self.transaction_validation(transaction):
-                raise BlockValidationError(f'Transaction in block not valid: {transaction.toJson()}')
+                raise BlockValidationError(
+                    f"Transaction in block not valid: {transaction.toJson()}"
+                )
 
         return True
 
@@ -158,16 +207,20 @@ class Chain():
     # checking: signature, amount, fee, payer/payee
     def transaction_validation(self, transaction):
         sender_balance = self.account_model.get_balance(transaction.get_payer())
-        if sender_balance < transaction.get_amount() + transaction.get_fee():
-            raise TransactionValidationError('Invalid balance !')
-        if not transaction.check_verified(transaction.payload(), transaction.get_signature(), transaction.get_payer()):
-            raise TransactionValidationError('Transaction signature not valid !')
+        if int(sender_balance) < int(transaction.get_amount()) + int(
+            transaction.get_fee()
+        ):
+            raise TransactionValidationError("Invalid balance !")
+        if not transaction.check_verified(
+            transaction.payload(), transaction.get_signature(), transaction.get_payer()
+        ):
+            raise TransactionValidationError("Transaction signature not valid !")
         if transaction.get_amount() < 0:
-            raise TransactionValidationError('Transaction amount too low !')
+            raise TransactionValidationError("Transaction amount too low !")
         if transaction.get_fee() < self._minimum_fee:
-            raise TransactionValidationError('Fee lower than minimum !')
+            raise TransactionValidationError("Fee lower than minimum !")
         if transaction.get_payer() == transaction.get_payee():
-            raise TransactionValidationError('Transaction payer is the same as payee !')
+            raise TransactionValidationError("Transaction payer is the same as payee !")
 
         return True
 
@@ -185,4 +238,8 @@ class Chain():
         return self.chain[-1]
 
     def toJson(self):
-        return self.__dict__
+        data = {}
+        data["chain"] = []
+        for block in self.chain:
+            data["chain"].append(block.toJson())
+        return data

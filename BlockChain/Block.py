@@ -5,12 +5,10 @@ import hashlib
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 import copy
+import Utils as Utl
 
-import Utils
 
-
-class Block():
-
+class Block:
     def __init__(self, index, previousHash, transactions: list, forger, signature=None):
         self._index = index
         self._previousHash = previousHash
@@ -38,10 +36,16 @@ class Block():
     """
     Hash built using the block parameters
     """
+
     @property
     def getHash(self) -> object:
-        StringToBlock = "{}{}{}{}{}".format(self._index, self._previousHash, self._timeStamp, self._forger,
-                                            [tr.toString() for tr in self._transactions])
+        StringToBlock = "{}{}{}{}{}".format(
+            self._index,
+            self._previousHash,
+            self._timeStamp,
+            self._forger,
+            [tr.toString() for tr in self._transactions],
+        )
         return hashlib.sha256(StringToBlock.encode()).hexdigest()
 
     def get_transactions(self) -> list:
@@ -56,10 +60,11 @@ class Block():
     param: public_key_loc Path to public key
     param: signature String signature to be verified
     """
+
     @staticmethod
     def check_verified(data, signature, public_key):
         signature = bytes.fromhex(signature)
-        data_hash = Utils.hash(data)
+        data_hash = Utl.hash(data)
         publicKey = RSA.importKey(binascii.unhexlify(public_key))
         signatureSchemeObject = PKCS1_v1_5.new(publicKey)
         if signatureSchemeObject.verify(data_hash, signature):
@@ -68,20 +73,21 @@ class Block():
 
     def payload(self):
         json_representation = copy.deepcopy(self.toJson())
-        json_representation['signature'] = ''
+        json_representation["signature"] = ""
         return json_representation
 
     def toJson(self):
-        data = {}
-        data['index'] = self._index
-        data['previousHash'] = self._previousHash
         transactions = []
         for trans in self._transactions:
             transactions.append(trans.toJson())
-        data['transactions'] = transactions
-        data['timeStamp'] = self._timeStamp
-        data['forger'] = self._forger
-        data['signature'] = self._signature
+
+        data = {}
+        data["index"] = self._index
+        data["previousHash"] = self._previousHash
+        data["transactions"] = transactions
+        data["timeStamp"] = self._timeStamp
+        data["forger"] = self._forger
+        data["signature"] = self._signature
         return data
 
     @staticmethod
@@ -91,6 +97,9 @@ class Block():
         return False
 
     def __repr__(self) -> str:
-        return "{} - {} - {} - {}".format(self._index, self._previousHash, self._transactions.__repr__(), self._timeStamp)
-
-
+        return "{} - {} - {} - {}".format(
+            self._index,
+            self._previousHash,
+            self._transactions.__repr__(),
+            self._timeStamp,
+        )

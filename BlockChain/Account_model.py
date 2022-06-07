@@ -2,7 +2,6 @@ from Exceptions import AccountModelError
 
 
 class AccountModel:
-
     def __init__(self):
         self._accounts = []
         # map the public key to the amount of tokens
@@ -14,7 +13,8 @@ class AccountModel:
         if account_publicKey in self._accounts:
             return self._balances[account_publicKey]
         else:
-            raise AccountModelError('Account not found -get !')
+            self._accounts.append(account_publicKey)
+            self._balances[account_publicKey] = 0
 
     def get_accounts(self):
         return self._accounts
@@ -28,5 +28,4 @@ class AccountModel:
         if account_publicKey in self._accounts:
             self._balances[account_publicKey] += amount
         else:
-            raise AccountModelError('Account not found -update !')
-
+            raise AccountModelError("Account not found -update !")

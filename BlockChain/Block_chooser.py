@@ -1,7 +1,8 @@
 from queue import Queue
 from threading import Thread
 
-from Block import *
+import Utils
+
 
 class BlockChooser(Thread):
     def __init__(self, blockchain):
@@ -19,6 +20,7 @@ class BlockChooser(Thread):
     def set_best_block(self):
         self.__best_block = None
 
+    # TODO
     def set_block_penalty(self):
         self.__block_penalty = None
 
