@@ -25,8 +25,8 @@ class UI:
         ip = sys.argv[1]
         port = int(sys.argv[2])
         api_port = int(sys.argv[3])
-        if len(sys.argv) > 4:
-            keyfile = sys.argv[4]
+        if len(sys.argv) > 5:
+            keyfile = sys.argv[4], sys.argv[5]
 
         node = Node(ip, port, keyfile)
         node.startP2P()

@@ -6,8 +6,8 @@ from .PeerDiscoveryHandler import PeerDiscoveryHandler
 from .SocketConnector import SocketConnector
 import Utils as Utls
 
-class SocketCommunication(Node):
 
+class SocketCommunication(Node):
     def __init__(self, ip, port):
         super(SocketCommunication, self).__init__(ip, port, None)
         self.peers = []
@@ -29,15 +29,18 @@ class SocketCommunication(Node):
 
     def connect_originNode(self):
         if self.socketConnector != 10001:
-            self.connect_with_node('localhost', 10001)
+            self.connect_with_node("localhost", 10001)
 
     def node_message(self, node, data):
         message = Utls.decode(json.dumps(data))
-        if message.message_type == 'DISCOVERY':
+        if message.message_type == "DISCOVERY":
             self.peerDiscoveryHandler.handle_message(message)
-        elif message.message_type == 'TRANSACTION':
+        elif message.message_type == "TRANSACTION":
             transaction = message.data
-            self.node.handleTransaction(transaction)
+            self.node.handle_transaction(transaction)
+        elif message.message_type == "BLOCK":
+            block = message.data
+            self.node.handle_block(block)
 
     def send(self, receiver, data):
         self.send_to_node(receiver, data)

@@ -65,7 +65,7 @@ class Block:
     def check_verified(data, signature, public_key):
         signature = bytes.fromhex(signature)
         data_hash = Utl.hash(data)
-        publicKey = RSA.importKey(binascii.unhexlify(public_key))
+        publicKey = RSA.importKey(public_key)
         signatureSchemeObject = PKCS1_v1_5.new(publicKey)
         if signatureSchemeObject.verify(data_hash, signature):
             return True

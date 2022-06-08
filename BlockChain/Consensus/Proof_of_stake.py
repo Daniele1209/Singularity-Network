@@ -6,6 +6,7 @@ class ProofOfStake:
     def __init__(self):
         # map account keys to corresponding staking of the account
         self.stakers = {}
+        self.set_genesisStake()
 
     def get_stake(self, public_key):
         if public_key in self.stakers.keys():
@@ -14,7 +15,7 @@ class ProofOfStake:
 
     # set the first stake in the staker list, so we do not have an empty list
     def set_genesisStake(self):
-        genesis_account_public = open("Keys/PublicKey.pem", "r").read()
+        genesis_account_public = open("../Keys/PublicKey.pem", "r").read()
         self.stakers[genesis_account_public] = 1
 
     # used to set the stake amount and add to staker accounts
@@ -54,7 +55,6 @@ class ProofOfStake:
             if min_offset is None or offset < min_offset:
                 min_offset = offset
                 winner_lot = lot
-
         return winner_lot
 
     """
