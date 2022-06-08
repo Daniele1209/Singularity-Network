@@ -10,11 +10,9 @@ class AccountModel:
         self._balances = {}
 
     def get_balance(self, account_publicKey):
-        if account_publicKey in self._accounts:
-            return self._balances[account_publicKey]
-        else:
-            self._accounts.append(account_publicKey)
-            self._balances[account_publicKey] = 0
+        if account_publicKey not in self._accounts:
+            self.add_account(account_publicKey)
+        return self._balances[account_publicKey]
 
     def get_accounts(self):
         return self._accounts
@@ -28,4 +26,5 @@ class AccountModel:
         if account_publicKey in self._accounts:
             self._balances[account_publicKey] += amount
         else:
-            raise AccountModelError("Account not found -update !")
+            # raise AccountModelError("Account not found -update !")
+            self._balances[account_publicKey] += amount

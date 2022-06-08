@@ -18,14 +18,17 @@ class UI:
         print()
         print(figlet_format("Inari Network", font="slant"))
 
+        keyfile = None
         # argv[0] - name of program
         # argv[1] - ip
         # argv[0] - port
         ip = sys.argv[1]
         port = int(sys.argv[2])
         api_port = int(sys.argv[3])
+        if len(sys.argv) > 4:
+            keyfile = sys.argv[4]
 
-        node = Node(ip, port)
+        node = Node(ip, port, keyfile)
         node.startP2P()
         node.startAPI(api_port)
 

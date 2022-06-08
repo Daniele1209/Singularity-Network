@@ -18,7 +18,7 @@ from Transaction import Transaction
 from Block_chooser import BlockChooser
 from Wallet.Wallet import Wallet
 from Account_model import AccountModel
-from .Consensus.Proof_of_stake import ProofOfStake
+from Consensus.Proof_of_stake import ProofOfStake
 import Utils
 
 from Crypto.Hash import SHA, MD5
@@ -26,6 +26,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 from urllib.parse import urlparse
 import binascii
+import logging
 
 
 class Chain:
@@ -141,13 +142,27 @@ class Chain:
 
         return total
 
+    """
+    We have 2 cases of transaction, the transfer one and the stake
+    In the stake transaction the amount of coins that a user has is locked
+    """
+
     def execute_transaction(self, transaction):
-        sender_account = transaction.get_payer()
-        receiver_account = transaction.get_payee()
-        amount = transaction.get_amount()
-        fee = transaction.get_fee()
-        self.account_model.balance_update(sender_account, -(amount + fee))
-        self.account_model.balance_update(receiver_account, amount)
+        if transaction.type == "STAKE":
+            sender = transaction.get_payer()
+            receiver = transaction.get_payee()
+            if sender == receiver:
+                stake_amount = transaction.get_amount()
+                self.pos.update(sender, stake_amount)
+                # update account balance, locking the staked amount
+                self.account_model.balance_update(sender, -amount)
+        else:
+            sender_account = transaction.get_payer()
+            receiver_account = transaction.get_payee()
+            amount = transaction.get_amount()
+            fee = transaction.get_fee()
+            self.account_model.balance_update(sender_account, -(amount + fee))
+            self.account_model.balance_update(receiver_account, amount)
 
     def execute_transactions(self, transactions):
         for transaction in transactions:
@@ -207,9 +222,17 @@ class Chain:
     # checking: signature, amount, fee, payer/payee
     def transaction_validation(self, transaction):
         sender_balance = self.account_model.get_balance(transaction.get_payer())
-        if int(sender_balance) < int(transaction.get_amount()) + int(
-            transaction.get_fee()
-        ):
+        print(
+            "PAYER BALANCE :::: "
+            + str(sender_balance)
+            + " :::: "
+            + transaction.get_type()
+        )
+        print(self.account_model.get_accounts())
+        if transaction.get_type() == "EXCHANGE":
+            return True
+        if int(sender_balance) < int(transaction.get_amount()):
+            print("Invalid balance !")
             raise TransactionValidationError("Invalid balance !")
         if not transaction.check_verified(
             transaction.payload(), transaction.get_signature(), transaction.get_payer()

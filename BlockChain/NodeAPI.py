@@ -42,7 +42,7 @@ class NodeAPI(FlaskView):
     @route("/transaction", methods=["POST"])
     def transaction_method(self):
         values = request.get_json()
-        if not "transaction" in values:
+        if "transaction" not in values:
             err_text = (
                 "POST transaction method failed due to wrong object request value !"
             )

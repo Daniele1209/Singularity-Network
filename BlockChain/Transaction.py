@@ -11,13 +11,13 @@ import Utils
 class Transaction:
 
     # type can be STAKING or TRANSFER
-    def __init__(self, amount, payer, payee, fee, type='TRANSFER'):
+    def __init__(self, amount, payer, payee, fee, type="TRANSFER"):
         self._amount = amount
         self._payer = payer
         self._payee = payee
         self._fee = fee
         self._type = type
-        self._signature = None
+        self._signature = ""
         self._time = time.localtime()
 
     def get_payer(self):
@@ -31,6 +31,9 @@ class Transaction:
 
     def get_signature(self):
         return self._signature
+
+    def get_type(self):
+        return self._type
 
     def get_fee(self):
         return self._fee
@@ -50,6 +53,7 @@ class Transaction:
     param: public_key_loc Path to public key
     param: signature String signature to be verified
     """
+
     @staticmethod
     def check_verified(data, signature, public_key):
         signature = bytes.fromhex(signature)
@@ -60,13 +64,20 @@ class Transaction:
             return True
         return False
 
-
     def toString(self):
-        return str(self._amount) + " " + str(self._payer) + " " + str(self._payee) + " " + str(self._time)
+        return (
+            str(self._amount)
+            + " "
+            + str(self._payer)
+            + " "
+            + str(self._payee)
+            + " "
+            + str(self._time)
+        )
 
     def payload(self):
         json_representation = copy.deepcopy(self.toJson())
-        json_representation['signature'] = ''
+        json_representation["signature"] = ""
         return json_representation
 
     def equals(self, transaction):
@@ -76,11 +87,11 @@ class Transaction:
 
     def toJson(self):
         data = {}
-        data['amount'] = self._amount
-        data['payer'] = self._payer
-        data['payee'] = self._payee
-        data['fee'] = self._fee
-        data['type'] = self._type
-        data['time'] = self._time
-        data['signature'] = self._signature
+        data["amount"] = self._amount
+        data["payer"] = self._payer
+        data["payee"] = self._payee
+        data["fee"] = self._fee
+        data["type"] = self._type
+        data["time"] = self._time
+        data["signature"] = self._signature
         return data

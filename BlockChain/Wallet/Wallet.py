@@ -12,6 +12,7 @@ from Transaction import Transaction
 
 class Wallet:
     def __init__(self, name="#", write=True):
+        self._key_pair = None
         self._publicKey = None
         self._privateKey = None
         self._name = name
@@ -19,6 +20,9 @@ class Wallet:
         self.generateKeyPair()
 
     def get_public_key(self):
+        return self._publicKey
+
+    def get_publicKey_string(self):
         return self._publicKey
 
     def set_name(self, new_name):
@@ -32,8 +36,8 @@ class Wallet:
         with open(file_private, "r") as private_file:
             private_key = RSA.importKey(private_file.read())
         try:
-            self._publicKey = public_key
-            self._privateKey = private_key
+            self._publicKey = public_key.exportKey("PEM").decode("utf-8")
+            self._privateKey = private_key.exportKey("PEM").decode("utf-8")
         except:
             raise Exception("Wallet key import filed !")
 
@@ -45,14 +49,11 @@ class Wallet:
     def generateKeyPair(self):
         random_gen = Crypto.Random.new().read
         private_key = RSA.generate(2048, random_gen)
+        self._key_pair = private_key
         public_key = private_key.publickey()
         key_pair = {
-            "private_key": binascii.hexlify(private_key.exportKey(format="PEM")).decode(
-                "ascii"
-            ),
-            "public_key": binascii.hexlify(public_key.exportKey(format="PEM")).decode(
-                "ascii"
-            ),
+            "private_key": private_key.exportKey("PEM").decode("utf-8"),
+            "public_key": public_key.exportKey("PEM").decode("utf-8"),
         }
 
         if self.write:
@@ -71,14 +72,16 @@ class Wallet:
         return block
 
     def createTransaction(self, amount, receiver, fee, type="TRANSFER"):
-        transaction = Transaction(amount, self._publicKey, receiver, fee, type)
+        transaction = Transaction(
+            amount, self.get_publicKey_string(), receiver, fee, type
+        )
         signature = self.sign(transaction.payload())
         transaction.sign_transaction(signature)
         return transaction
 
     def sign(self, data):
         hash_data = hash(data)
-        private_key_rsa = RSA.importKey(binascii.unhexlify(self._privateKey))
+        private_key_rsa = RSA.importKey(self._privateKey)
         signature_object = PKCS1_v1_5.new(private_key_rsa)
         signature = signature_object.sign(hash_data)
         return signature.hex()
@@ -99,6 +102,3 @@ class Wallet:
         if signatureSchemeObject.verify(data_hash, signature):
             return True
         return False
-
-    def toJson(self):
-        return self.__dict__

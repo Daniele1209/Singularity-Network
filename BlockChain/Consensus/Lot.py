@@ -1,4 +1,4 @@
-from .. import Utils as Utl
+import Utils as Utl
 
 
 class Lot:
