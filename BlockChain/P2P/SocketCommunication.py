@@ -4,6 +4,7 @@ import json
 from .SocketConnector import SocketConnector
 from .PeerDiscoveryHandler import PeerDiscoveryHandler
 from .SocketConnector import SocketConnector
+from .Message import Message
 import Utils as Utls
 
 
@@ -28,7 +29,7 @@ class SocketCommunication(Node):
         self.peerDiscoveryHandler.handshake(node)
 
     def connect_originNode(self):
-        if self.socketConnector != 10001:
+        if self.socketConnector.get_port() != 10001:
             self.connect_with_node("localhost", 10001)
 
     def node_message(self, node, data):

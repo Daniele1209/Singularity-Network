@@ -11,7 +11,7 @@ from Exceptions import (
 )
 from Config import genesis_dev_address, block_size, minimum_fee
 
-from Message import Message
+from P2P.Message import Message
 
 from Block import *
 from Transaction import Transaction
@@ -86,7 +86,7 @@ class Chain:
             self.pendingTransactions.append(transaction)
     """
 
-    def insert_transaction(self, transaction):
+    def insert_transaction(self, transaction: Transaction):
         # check transaction signature
         signature_valid = self.transaction_validation(transaction)
         # check if transaction already exists
@@ -95,6 +95,7 @@ class Chain:
         if signature_valid and transaction_exists:
             self.pendingTransactions.append(transaction)
         else:
+            print()
             raise TransactionValidationError(
                 "Transaction signature not valid or already existing !"
             )

@@ -1,4 +1,3 @@
-
 import time
 import threading
 
@@ -8,8 +7,7 @@ import Utils as Utls
 # Sub-module of Socket Communication
 # Frequently connect to the whole network to see if there are new nodes
 # Broadcasts all the nodes he knows to the network
-class PeerDiscoveryHandler():
-
+class PeerDiscoveryHandler:
     def __init__(self, node):
         self.socketCommunication = node
 
@@ -21,9 +19,9 @@ class PeerDiscoveryHandler():
 
     def status(self):
         while True:
-            print('Current connections: ')
+            print("Current connections: ")
             for peer in self.socketCommunication.peers:
-                print(f'ip: {peer.ip} | port: {peer.port}')
+                print(f"ip: {peer.ip} | port: {peer.port}")
             time.sleep(10)
 
     # start discovery and status in their own thread
@@ -42,9 +40,9 @@ class PeerDiscoveryHandler():
         socket_connector = self.socketCommunication.socketConnector
         peers = self.socketCommunication.peers
         data = peers
-        message_type = 'DISCOVERY'
+        message_type = "DISCOVERY"
         message = Message(socket_connector, message_type, data)
-        
+
         encoded_message = Utls.encode(message)
         return encoded_message
 
@@ -67,5 +65,7 @@ class PeerDiscoveryHandler():
             for peer in self.socketCommunication.peers:
                 if peer.equals(peersPeer):
                     peer_known = True
-            if not peer_known and not peersPeer.equals(self.socketCommunication.socketConnector):
+            if not peer_known and not peersPeer.equals(
+                self.socketCommunication.socketConnector
+            ):
                 self.socketCommunication.connect_with_node(peersPeer.ip, peersPeer.port)

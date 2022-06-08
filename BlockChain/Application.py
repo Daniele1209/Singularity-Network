@@ -16,7 +16,7 @@ class UI:
 
     def run(self):
         print()
-        print(figlet_format("Inari Network", font="slant"))
+        print(figlet_format("Singularity Network", font="slant"))
 
         keyfile = None
         # argv[0] - name of program
@@ -33,25 +33,25 @@ class UI:
         node.startAPI(api_port)
 
         # used for testing on multiple ports
-        if port == 10002:
-            node.p2p.connect_with_node("localhost", 10001)
+        # if port == 10002:
+        #     node.p2p.connect_with_node("localhost", 10001)
 
-            # json_object = json.dumps(package, indent = 4)
-            # # Writing to sample.json
-            # with open("test_req.json", "w") as outfile:
-            #     outfile.write(json_object)
-            # request = requests.posst(url, json=package)
-            # print(request.text)
+        # json_object = json.dumps(package, indent = 4)
+        # # Writing to sample.json
+        # with open("test_req.json", "w") as outfile:
+        #     outfile.write(json_object)
+        # request = requests.posst(url, json=package)
+        # print(request.text)
 
-        print(node.blockchain.toJson())
-        # print(node.wallet.toJson())
+        # print(node.blockchain.toJson())
+        # # print(node.wallet.toJson())
 
-        print("💰 wallets created ! 💰")
+        # print("💰 wallets created ! 💰")
 
-        print("💳 Transactions are pending ! 💳")
+        # print("💳 Transactions are pending ! 💳")
 
-        # Processing pending transactions
-        print("⛏️ Node working ... ⛏️")
+        # # Processing pending transactions
+        # print("⛏️ Node working ... ⛏️")
 
 
 ui = UI()

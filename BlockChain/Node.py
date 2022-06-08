@@ -6,7 +6,7 @@ from NodeAPI import NodeAPI
 from Block import Block
 
 from Exceptions import TransactionValidationError
-from Message import Message
+from P2P.Message import Message
 import Utils
 
 
@@ -50,7 +50,7 @@ class Node:
 
     def handle_block(self, block: Block):
         signature_valid = Wallet.check_verified(
-            block.payload, block.get_signature(), block.get_forger()
+            block.payload(), block.get_signature(), block.get_forger()
         )
         if signature_valid:
             self.blockchain.push_block(block)
