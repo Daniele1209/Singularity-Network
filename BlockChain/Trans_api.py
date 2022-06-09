@@ -33,6 +33,6 @@ if __name__ == "__main__":
     postTransaction(exchange, wallet1, 100, "EXCHANGE")
     postTransaction(exchange, wallet1, 10, "EXCHANGE")
 
-    # postTransaction(wallet1, wallet1, 25, "STAKE")
-    # postTransaction(wallet2, wallet1, 1, "TRANSFER")
-    # postTransaction(wallet2, wallet1, 1, "TRANSFER")
+    postTransaction(wallet1, wallet1, 25, "STAKE")
+    postTransaction(wallet2, wallet1, 10, "TRANSFER")
+    postTransaction(wallet2, wallet1, 10, "TRANSFER")

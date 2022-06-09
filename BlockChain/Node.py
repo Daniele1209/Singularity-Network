@@ -1,3 +1,4 @@
+from email import message
 from quopri import encodestring
 from Chain import Chain
 from Wallet.Wallet import Wallet
@@ -49,17 +50,24 @@ class Node:
                 self.forge_block()
 
     def handle_block(self, block: Block):
-        signature_valid = Wallet.check_verified(
-            block.payload(), block.get_signature(), block.get_forger()
-        )
-        if signature_valid:
-            self.blockchain.push_block(block)
+        # signature_valid = Wallet.check_verified(
+        #     block.payload(), block.get_signature(), block.get_forger()
+        # )
+        # if signature_valid:
 
-            message = Message(self.p2p.socketConnector, "BLOCK", block)
-            # Encode the message
-            message_encoded = Utils.encode(message)
-            # Broadcast the encoded message
-            self.p2p.broadcast(message_encoded)
+        # check of a a blockchain is in sync with the network
+        # if not, update the blocks
+        if not self.blockchain.check_block_count(block):
+            print("BLOCKCHAIN REQUEST")
+            self.request_chain()
+
+        self.blockchain.push_block(block)
+
+        message = Message(self.p2p.socketConnector, "BLOCK", block)
+        # Encode the message
+        message_encoded = Utils.encode(message)
+        # Broadcast the encoded message
+        self.p2p.broadcast(message_encoded)
 
     # notifies the blockchain that is time to forge a new block
     def forge_block(self):
@@ -71,6 +79,22 @@ class Node:
             message = Message(self.p2p.socketConnector, "BLOCK", new_block)
             encoded_message = Utils.encode(message)
             self.p2p.broadcast(encoded_message)
+
+    # request the blockchain from other nodes
+    def request_chain(self):
+        message = Message(self.p2p.socketConnector, "BLOCKCHAINREQUEST", None)
+        encoded_message = Utils.encode(message)
+        self.p2p.broadcast(encoded_message)
+
+    # send blockchain data to a certain node
+    def handle_chain_request(self, request_node):
+        message = Message(self.p2p.socketConnector, "BLOCKCHAIN", self.blockchain)
+        encoded_message = Utils.encode(message)
+        self.p2p.send(request_node, encoded_message)
+
+    # update current blockchain from fetched one
+    def handle_received_blockchain(self, blockchain):
+        self.blockchain.sync_chain(blockchain)
 
     def startP2P(self):
         self.p2p = SocketCommunication(self.ip, self.port)

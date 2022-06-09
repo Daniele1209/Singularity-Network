@@ -49,6 +49,7 @@ class Chain:
     def sync_chain(self, current_chain):
         self.chain = current_chain.chain
         self.pendingTransactions = current_chain.pendingTransactions
+        self.account_model = current_chain.account_model
 
     def genesis(self):
         block_to_add = Block(
@@ -71,21 +72,6 @@ class Chain:
     def get_last_hash(self):
         return Utils.hash(self._last_block.payload()).hexdigest()
 
-    # def new_block(self, block):
-    #     self.next_block_chooser.scan_block(block)
-
-    """
-    # check that the signature corresponds to transaction
-    # signed by the public key (sender_address)
-    def addBlock(self, senderKey, signature, transaction):
-        publicKey = RSA.importKey(binascii.unhexlify(senderKey))
-        verifier = PKCS1_v1_5.new(publicKey)
-        _hash = SHA.new(transaction.toString().encode('utf8'))
-
-        if verifier.verify(_hash, binascii.unhexlify(signature)):
-            self.pendingTransactions.append(transaction)
-    """
-
     def insert_transaction(self, transaction: Transaction):
         # check transaction signature
         signature_valid = self.transaction_validation(transaction)
@@ -94,11 +80,6 @@ class Chain:
 
         if signature_valid and transaction_exists:
             self.pendingTransactions.append(transaction)
-        else:
-            print()
-            raise TransactionValidationError(
-                "Transaction signature not valid or already existing !"
-            )
 
     def remove_transactions(self, transactions):
         for transaction in transactions:
@@ -192,7 +173,7 @@ class Chain:
                 return False
         return True
 
-    def check_block_transaction(self, transaction):
+    def check_block_transaction(self, transaction: Transaction):
         for block in self.chain:
             for curr_transaction in block.get_transactions():
                 if curr_transaction.equals(transaction):
@@ -266,6 +247,11 @@ class Chain:
         #     raise TransactionValidationError("Transaction payer is the same as payee !")
 
         return True
+
+    def check_block_count(self, block: Block):
+        if self.chain[-1].get_index() == block.get_index() - 1:
+            return True
+        return False
 
     def last_index(self):
         return self._last_block.get_index()
