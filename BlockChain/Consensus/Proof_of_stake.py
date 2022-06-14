@@ -1,3 +1,4 @@
+import BlockChain.Utils
 from .Lot import Lot
 
 
@@ -45,7 +46,7 @@ class ProofOfStake:
         winner_lot = None
         min_offset = None
 
-        generated_hash = int(Utils.hash(seed).hexdigest(), 16)
+        generated_hash = int(BlockChain.Utils.hash(seed).hexdigest(), 16)
 
         for lot in lots:
             lot_to_int = int(lot.lotHash(), 16)

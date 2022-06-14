@@ -9,7 +9,7 @@ def postTransaction(sender, receiver, amount, type):
         amount, receiver.get_public_key(), 0.1 * amount, type=type
     )
     url = "http://localhost:5000/transaction"
-    package = {"transaction": Utils.encode(transaction)}
+    package = {"transaction": BlockChain.Utils.encode(transaction)}
     print(package)
     response = requests.post(url, json=package)
     print(response.status_code)

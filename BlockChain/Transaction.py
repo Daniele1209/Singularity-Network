@@ -56,7 +56,7 @@ class Transaction:
     @staticmethod
     def check_verified(data, signature, public_key):
         signature = bytes.fromhex(signature)
-        data_hash = Utils.hash(data)
+        data_hash = BlockChain.Utils.hash(data)
         publicKey = RSA.importKey(public_key)
         signatureSchemeObject = PKCS1_v1_5.new(publicKey)
         if signatureSchemeObject.verify(data_hash, signature):

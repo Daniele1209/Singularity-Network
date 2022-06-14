@@ -55,7 +55,7 @@ class Chain:
             return self.account_model.get_balance(wallet_address)
 
     def get_last_hash(self):
-        return Utils.hash(self._last_block.payload()).hexdigest()
+        return BlockChain.Utils.hash(self._last_block.payload()).hexdigest()
 
     def insert_transaction(self, transaction: Transaction):
         # check transaction signature
