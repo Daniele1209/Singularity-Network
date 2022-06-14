@@ -42,7 +42,10 @@ class SocketCommunication(Node):
         self.peerDiscoveryHandler.handshake(node)
 
     def __connect_origin_node(self, ip: str, port: int):
-        if self.socketConnector.get_port() != port:
+        if (
+            self.socketConnector.get_ip() != ip
+            or self.socketConnector.get_port() != port
+        ):
             self.connect_with_node(ip, port)
 
     @overrides
