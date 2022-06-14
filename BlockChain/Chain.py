@@ -1,10 +1,8 @@
-import copy
 from typing import List
 
 import BlockChain.Utils
 from BlockChain.Account_model import AccountModel
 from BlockChain.Block import *
-from BlockChain.Config import genesis_dev_address, block_size, minimum_fee
 from BlockChain.Consensus.Proof_of_stake import ProofOfStake
 from BlockChain.Exceptions import (
     TransactionValidationError,
@@ -13,6 +11,7 @@ from BlockChain.Exceptions import (
 )
 from BlockChain.Transaction import Transaction
 from BlockChain.Wallet.Wallet import Wallet
+from config import settings
 
 
 class Chain:
@@ -21,7 +20,7 @@ class Chain:
         self.pendingTransactions: List[Transaction] = []
         # self._blockSize = block_size
         self._blockSize = 1
-        self._minimum_fee = minimum_fee
+        self._minimum_fee = settings.minimum_fee
         # Defining the first block in the chain
         self.genesis_hash = self.genesis()
 
@@ -41,7 +40,7 @@ class Chain:
             index=0,
             previousHash=0,
             transactions=[Transaction(1, "Genesis", "Viniele", 0)],
-            forger=genesis_dev_address,
+            forger=settings.genesis_dev_address,
         )
         self.chain.append(block_to_add)
         return block_to_add.getHash

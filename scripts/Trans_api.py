@@ -1,7 +1,3 @@
-import os
-
-print(os.getcwd())
-
 import requests
 
 import BlockChain.Utils

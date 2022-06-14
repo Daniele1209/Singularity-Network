@@ -1,7 +1,7 @@
-from Consensus.Proof_of_stake import ProofOfStake
-from Consensus.Lot import Lot
-import string
 import random
+import string
+
+from Consensus.Proof_of_stake import ProofOfStake
 
 
 def getRandomString(length):

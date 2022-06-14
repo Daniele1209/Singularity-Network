@@ -11,7 +11,7 @@ from BlockChain.Chain import Chain
 from BlockChain.Block import Block
 from BlockChain.Transaction import Transaction
 from BlockChain.Wallet.Wallet import Wallet
-from BlockChain.Config import genesis_dev_address, block_size, minimum_fee
+from config import settings
 
 
 class MyChainTester(unittest.TestCase):
@@ -57,7 +57,7 @@ class MyChainTester(unittest.TestCase):
             index=0,
             previousHash=0,
             transactions=[Transaction(1, "Genesis", "Viniele", 0)],
-            forger=genesis_dev_address,
+            forger=settings.genesis_dev_address,
         )
         genesis_from_chain = test_chain._last_block
         self.assertEqual(genesis_block.toJson(), genesis_from_chain.toJson())
@@ -101,7 +101,7 @@ class MyChainTester(unittest.TestCase):
 
     def test_add_invalid_transaction_count_block(self):
         test_chain = self.chain_with_wallets()
-        transactions = self.create_too_many_transactions(block_size + 1)
+        transactions = self.create_too_many_transactions(settings.block_size + 1)
         block = self.test_forger.createBlock(
             test_chain.last_index() + 1, transactions, test_chain._last_block.getHash
         )
@@ -223,7 +223,11 @@ class MyChainTester(unittest.TestCase):
         )
         test_chain.process_block(block)
         test_transaction = Transaction(
-            6, genesis_dev_address, block.get_forger(), fee=minimum_fee, type="REWARD"
+            6,
+            settings.genesis_dev_address,
+            block.get_forger(),
+            fee=settings.minimum_fee,
+            type="REWARD",
         )
         self.assertEqual(
             test_transaction.toJson(), test_chain.pendingTransactions[-1].toJson()

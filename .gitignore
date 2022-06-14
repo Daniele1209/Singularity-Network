@@ -6,3 +6,6 @@ frontend/migrations
 # Keys
 Keys
 *.pem
+
+# Ignore dynaconf secret files
+.secrets.*
