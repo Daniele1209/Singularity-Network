@@ -6,12 +6,12 @@ from typing import List, TYPE_CHECKING
 from overrides import overrides
 from p2pnetwork.node import Node
 
-from Utils import decode
+from BlockChain.Utils import decode
 from .PeerDiscoveryHandler import PeerDiscoveryHandler
 from .SocketConnector import SocketConnector
 
 if TYPE_CHECKING:
-    from Node import Node as SingularityNode
+    from BlockChain.Node import Node as SingularityNode
 
 
 class SocketCommunication(Node):

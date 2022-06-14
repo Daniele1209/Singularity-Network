@@ -1,33 +1,18 @@
+import copy
 from typing import List
 
-import requests
-
-
-from Exceptions import (
+import BlockChain.Utils
+from BlockChain.Account_model import AccountModel
+from BlockChain.Block import *
+from BlockChain.Config import genesis_dev_address, block_size, minimum_fee
+from BlockChain.Consensus.Proof_of_stake import ProofOfStake
+from BlockChain.Exceptions import (
     TransactionValidationError,
     BlockValidationError,
     BlockProcessingError,
-    AccountModelError,
 )
-from Config import genesis_dev_address, block_size, minimum_fee
-
-from P2P.Message import Message
-
-from Block import *
-from Transaction import Transaction
-from Block_chooser import BlockChooser
-from Wallet.Wallet import Wallet
-from Account_model import AccountModel
-from Consensus.Proof_of_stake import ProofOfStake
-import Utils
-
-from Crypto.Hash import SHA, MD5
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
-from urllib.parse import urlparse
-import binascii
-import logging
-import copy
+from BlockChain.Transaction import Transaction
+from BlockChain.Wallet.Wallet import Wallet
 
 
 class Chain:

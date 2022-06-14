@@ -6,4 +6,6 @@ Use default `black` installation.
 
 # Running
  Project Root Folder is `BlockChain`
- Command `python3 Application.py <ipaddr> <port> <apiport> <origin_ipaddr> <origin_port> [publickeypath] [privatekeypath]`
+ First you have to start the origin node, and then other nodes. Otherwise, child nodes will not connect to the origin.
+
+ Run with command: `python3 -m BlockChain.Application <ipaddr> <port> <apiport> <origin_ipaddr> <origin_port> [publickeypath] [privatekeypath]`

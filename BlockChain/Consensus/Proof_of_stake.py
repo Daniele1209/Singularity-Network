@@ -1,5 +1,4 @@
 from .Lot import Lot
-import Utils
 
 
 class ProofOfStake:
@@ -15,7 +14,7 @@ class ProofOfStake:
 
     # set the first stake in the staker list, so we do not have an empty list
     def set_genesisStake(self):
-        genesis_account_public = open("../Keys/PublicKey.pem", "r").read()
+        genesis_account_public = open("./Keys/PublicKey.pem", "r").read()
         self.stakers[genesis_account_public] = 1
 
     # used to set the stake amount and add to staker accounts

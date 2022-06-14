@@ -1,11 +1,11 @@
-import binascii
-import time
+import copy
 import hashlib
+import time
 
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
-import copy
-import Utils as Utl
+
+import BlockChain.Utils as Utl
 
 
 class Block:

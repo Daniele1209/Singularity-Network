@@ -1,13 +1,10 @@
 import Crypto
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
-import binascii
-import sys
 
-from Utils import hash, encode, decode
-
-from Block import Block
-from Transaction import Transaction
+from BlockChain.Block import Block
+from BlockChain.Transaction import Transaction
+from BlockChain.Utils import hash
 
 
 class Wallet:
@@ -57,9 +54,9 @@ class Wallet:
         }
 
         if self.write:
-            file_out = open("../Keys/" + self._name + "_PrivateKey.pem", "wb")
+            file_out = open("./Keys/" + self._name + "_PrivateKey.pem", "wb")
             file_out.write(private_key.export_key())
-            file_out = open("../Keys/" + self._name + "_PublicKey.pem", "wb")
+            file_out = open("./Keys/" + self._name + "_PublicKey.pem", "wb")
             file_out.write(public_key.export_key())
 
         self._privateKey = key_pair["private_key"]

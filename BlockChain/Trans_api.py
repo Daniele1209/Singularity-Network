@@ -1,13 +1,7 @@
-from Wallet.Wallet import Wallet
-from Chain import Chain
-from Node import Node
-import Utils
-
-import binascii
-from Crypto.PublicKey import RSA
-import pem
-
 import requests
+
+import BlockChain.Utils
+from BlockChain.Wallet.Wallet import Wallet
 
 
 def postTransaction(sender, receiver, amount, type):
@@ -22,7 +16,6 @@ def postTransaction(sender, receiver, amount, type):
 
 
 if __name__ == "__main__":
-
     wallet1 = Wallet(name="wallet1", write=False)
     wallet2 = Wallet(name="wallet2", write=False)
     exchange = Wallet(name="exchange", write=False)

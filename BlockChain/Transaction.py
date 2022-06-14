@@ -1,11 +1,10 @@
-import binascii
 import copy
 import time
 
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
-import Utils
+import BlockChain.Utils
 
 
 class Transaction:

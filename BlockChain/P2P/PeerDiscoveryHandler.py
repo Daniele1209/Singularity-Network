@@ -1,8 +1,9 @@
-import time
 import threading
+import time
 
+import BlockChain.Utils as Utls
 from .Message import Message
-import Utils as Utls
+
 
 # Sub-module of Socket Communication
 # Frequently connect to the whole network to see if there are new nodes

@@ -2,7 +2,7 @@ import sys
 
 from pyfiglet import figlet_format
 
-from Node import Node
+from BlockChain.Node import Node
 
 
 class UI:

@@ -1,10 +1,9 @@
-import Utils
-from Block import Block
-from Chain import Chain
-from NodeAPI import NodeAPI
-from P2P.Message import Message
-from P2P.SocketCommunication import SocketCommunication
-from Wallet.Wallet import Wallet
+from BlockChain.Block import Block
+from BlockChain.Chain import Chain
+from BlockChain.NodeAPI import NodeAPI
+from BlockChain.P2P.Message import Message
+from BlockChain.P2P.SocketCommunication import SocketCommunication
+from BlockChain.Wallet.Wallet import Wallet
 
 
 class Node:
