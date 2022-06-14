@@ -30,7 +30,7 @@ class UI:
 
         node = Node(ip, port, keyfile)
         node.startP2P()
-        node.startAPI(api_port)
+        node.startAPI(ip, api_port)
 
         # used for testing on multiple ports
         # if port == 10002:

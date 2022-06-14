@@ -100,7 +100,7 @@ class Node:
         self.p2p = SocketCommunication(self.ip, self.port)
         self.p2p.startSocketCommunication(self)
 
-    def startAPI(self, api_port):
+    def startAPI(self, ip: str = "localhost", api_port: int = 5000):
         self.api = NodeAPI()
         self.api.inject_node(self)
-        self.api.start(api_port)
+        self.api.start(ip, api_port)

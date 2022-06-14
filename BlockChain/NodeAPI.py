@@ -15,9 +15,9 @@ class NodeAPI(FlaskView):
     def __init__(self):
         self.app = Flask(__name__)
 
-    def start(self, api_port):
+    def start(self, ip: str, api_port: int):
         NodeAPI.register(self.app, route_base="/")
-        self.app.run(host="localhost", port=api_port)
+        self.app.run(host=ip, port=api_port)
 
     def inject_node(self, nodeToInj):
         global node
