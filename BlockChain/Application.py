@@ -1,13 +1,8 @@
 import sys
 
-from Wallet.Wallet import Wallet
-from Chain import Chain
-from Node import Node
-from pyfiglet import Figlet, figlet_format
-import requests
-import json
+from pyfiglet import figlet_format
 
-import Utils as Utls
+from Node import Node
 
 
 class UI:
@@ -25,11 +20,13 @@ class UI:
         ip = sys.argv[1]
         port = int(sys.argv[2])
         api_port = int(sys.argv[3])
-        if len(sys.argv) > 5:
-            keyfile = sys.argv[4], sys.argv[5]
+        origin_ip = sys.argv[4]
+        origin_port = int(sys.argv[5])
+        if len(sys.argv) > 7:
+            keyfile = sys.argv[6], sys.argv[7]
 
         node = Node(ip, port, keyfile)
-        node.startP2P()
+        node.startP2P(origin_ip, origin_port)
         node.startAPI(ip, api_port)
 
         # used for testing on multiple ports

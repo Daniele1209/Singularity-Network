@@ -1,14 +1,10 @@
-from email import message
-from quopri import encodestring
-from Chain import Chain
-from Wallet.Wallet import Wallet
-from P2P.SocketCommunication import SocketCommunication
-from NodeAPI import NodeAPI
-from Block import Block
-
-from Exceptions import TransactionValidationError
-from P2P.Message import Message
 import Utils
+from Block import Block
+from Chain import Chain
+from NodeAPI import NodeAPI
+from P2P.Message import Message
+from P2P.SocketCommunication import SocketCommunication
+from Wallet.Wallet import Wallet
 
 
 class Node:
@@ -96,9 +92,9 @@ class Node:
     def handle_received_blockchain(self, blockchain):
         self.blockchain.sync_chain(blockchain)
 
-    def startP2P(self):
+    def startP2P(self, ip: str = "localhost", port: int = 10001):
         self.p2p = SocketCommunication(self.ip, self.port)
-        self.p2p.startSocketCommunication(self)
+        self.p2p.start_socket_communication(self, ip, port)
 
     def startAPI(self, ip: str = "localhost", api_port: int = 5000):
         self.api = NodeAPI()
