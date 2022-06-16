@@ -1,3 +1,5 @@
+import os.path
+
 import Crypto
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
@@ -5,6 +7,7 @@ from Crypto.Signature import PKCS1_v1_5
 from BlockChain.Block import Block
 from BlockChain.Transaction import Transaction
 from BlockChain.Utils import hash
+from config import settings
 
 
 class Wallet:
@@ -54,9 +57,19 @@ class Wallet:
         }
 
         if self.write:
-            file_out = open("./Keys/" + self._name + "_PrivateKey.pem", "wb")
+            file_out = open(
+                os.path.join(
+                    settings.wallet_keys_folder, self._name + "_PrivateKey.pem"
+                ),
+                "wb",
+            )
             file_out.write(private_key.export_key())
-            file_out = open("./Keys/" + self._name + "_PublicKey.pem", "wb")
+            file_out = open(
+                os.path.join(
+                    settings.wallet_keys_folder, self._name + "_PublicKey.pem"
+                ),
+                "wb",
+            )
             file_out.write(public_key.export_key())
 
         self._privateKey = key_pair["private_key"]

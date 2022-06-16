@@ -3,6 +3,7 @@ import requests
 import BlockChain.Utils
 from BlockChain.AdditionalTypes import TRANSACTION_TYPE
 from BlockChain.Wallet.Wallet import Wallet
+from config import settings
 
 
 def post_transaction(
@@ -23,7 +24,9 @@ if __name__ == "__main__":
     wallet2 = Wallet(name="wallet2", write=False)
     exchange = Wallet(name="exchange", write=False)
 
-    wallet2.generateFromPair("./Keys/PublicKey.pem", "./Keys/PrivateKey.pem")
+    wallet2.generateFromPair(
+        settings.genesis_public_key_path, settings.genesis_private_key_path
+    )
 
     post_transaction(exchange, wallet2, 100, "EXCHANGE")
     post_transaction(exchange, wallet1, 100, "EXCHANGE")
