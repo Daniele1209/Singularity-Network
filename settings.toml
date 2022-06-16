@@ -4,3 +4,4 @@ minimum_fee = 1
 genesis_public_key_path = "./Keys/PublicKey.pem"
 genesis_private_key_path = "./Keys/PrivateKey.pem"
 wallet_keys_folder = "./Keys"
+delay_between_p2p_network_discovery_seconds = 10

@@ -3,6 +3,7 @@ import time
 
 import BlockChain.Utils as Utls
 from .Message import Message
+from config import settings
 
 
 # Sub-module of Socket Communication
@@ -16,14 +17,14 @@ class PeerDiscoveryHandler:
         while True:
             handshakeMessage = self.handshake_message()
             self.socketCommunication.broadcast(handshakeMessage)
-            time.sleep(10)
+            time.sleep(settings.delay_between_p2p_network_discovery_seconds)
 
     def status(self):
         while True:
             print("Current connections: ")
             for peer in self.socketCommunication.peers:
                 print(f"ip: {peer.ip} | port: {peer.port}")
-            time.sleep(10)
+            time.sleep(settings.delay_between_p2p_network_discovery_seconds)
 
     # start discovery and status in their own thread
     def start(self):

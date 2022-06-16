@@ -2,6 +2,8 @@ import BlockChain.Utils
 from .Lot import Lot
 from config import settings
 
+BASE_OF_HASH_DIGEST = 16
+
 
 class ProofOfStake:
     def __init__(self):
@@ -47,10 +49,12 @@ class ProofOfStake:
         winner_lot = None
         min_offset = None
 
-        generated_hash = int(BlockChain.Utils.hash(seed).hexdigest(), 16)
+        generated_hash = int(
+            BlockChain.Utils.hash(seed).hexdigest(), BASE_OF_HASH_DIGEST
+        )
 
         for lot in lots:
-            lot_to_int = int(lot.lotHash(), 16)
+            lot_to_int = int(lot.lotHash(), BASE_OF_HASH_DIGEST)
             offset = abs(lot_to_int - generated_hash)
 
             if min_offset is None or offset < min_offset:
