@@ -12,6 +12,7 @@ from .SocketConnector import SocketConnector
 
 if TYPE_CHECKING:
     from BlockChain.Node import Node as SingularityNode
+    from BlockChain.P2P.Message import Message
 
 
 class SocketCommunication(Node):
@@ -50,7 +51,7 @@ class SocketCommunication(Node):
 
     @overrides
     def node_message(self, node, data):
-        message = decode(json.dumps(data))
+        message: Message = decode(json.dumps(data))
         if message.message_type == "DISCOVERY":
             self.peerDiscoveryHandler.handle_message(message)
         elif message.message_type == "TRANSACTION":

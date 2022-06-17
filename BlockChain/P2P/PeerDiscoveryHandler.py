@@ -2,6 +2,7 @@ import threading
 import time
 
 import BlockChain.Utils as Utls
+from AdditionalTypes import MESSAGE_TYPE
 from .Message import Message
 from config import settings
 
@@ -42,7 +43,7 @@ class PeerDiscoveryHandler:
         socket_connector = self.socketCommunication.socketConnector
         peers = self.socketCommunication.peers
         data = peers
-        message_type = "DISCOVERY"
+        message_type: MESSAGE_TYPE = "DISCOVERY"
         message = Message(socket_connector, message_type, data)
 
         encoded_message = Utls.encode(message)
