@@ -192,7 +192,7 @@ class Chain:
                 raise BlockValidationError("Block hash invalid ! Same as genesis")
         if block.get_index() != self._last_block.get_index() + 1:
             raise BlockValidationError("Block index does not belong to the sequence")
-        if len(block.get_transactions()) > block_size:
+        if len(block.get_transactions()) > settings.block_size:
             raise BlockValidationError("Transaction number exceeds the max !")
 
         # check the validity of the forger
