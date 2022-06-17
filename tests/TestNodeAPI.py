@@ -6,6 +6,7 @@ import BlockChain.Utils as Utls
 from BlockChain.Chain import Chain
 from BlockChain.Node import Node
 from BlockChain.Wallet.Wallet import Wallet
+from NodeAPI import NodeAPI
 
 
 class MyNodeAPITester(unittest.TestCase):
@@ -40,11 +41,12 @@ class MyNodeAPITester(unittest.TestCase):
     def create_node_instance(self):
         node = Node(self.ip, self.port)
         node.startP2P()
-        node.startAPI(self.api_port)
-        return node
+        nodeApi = NodeAPI(node)
+        nodeApi.start("localhost", self.api_port)
+        return node, nodeApi
 
     def test_create_valid_transaction(self):
-        node = self.create_node_instance()
+        node, nodeApi = self.create_node_instance()
         transaction = self.test_wallet_1.createTransaction(
             10, self.test_wallet_2.get_public_key(), 0.1 * 10
         )

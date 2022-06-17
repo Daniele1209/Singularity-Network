@@ -1,7 +1,6 @@
 import BlockChain.Utils
 from BlockChain.Block import Block
 from BlockChain.Chain import Chain
-from BlockChain.NodeAPI import NodeAPI
 from BlockChain.P2P.Message import Message
 from BlockChain.P2P.SocketCommunication import SocketCommunication
 from BlockChain.Wallet.Wallet import Wallet
@@ -89,8 +88,3 @@ class Node:
     def startP2P(self, ip: str = "localhost", port: int = 10001):
         self.p2p = SocketCommunication(self.ip, self.port)
         self.p2p.start_socket_communication(self, ip, port)
-
-    def startAPI(self, ip: str = "localhost", api_port: int = 5000):
-        self.api = NodeAPI()
-        self.api.inject_node(self)
-        self.api.start(ip, api_port)

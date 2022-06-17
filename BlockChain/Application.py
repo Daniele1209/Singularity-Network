@@ -3,6 +3,7 @@ import sys
 from pyfiglet import figlet_format
 
 from BlockChain.Node import Node
+from NodeAPI import NodeAPI
 
 
 class UI:
@@ -24,7 +25,8 @@ class UI:
 
         node = Node(ip, port, keyfile)
         node.startP2P(origin_ip, origin_port)
-        node.startAPI(ip, api_port)
+        api = NodeAPI(node)
+        api.start(ip, api_port)
 
 
 ui = UI()
