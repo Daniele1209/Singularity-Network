@@ -20,6 +20,11 @@ def post_transaction(
 
 
 if __name__ == "__main__":
+    """
+    Default test accounts for chain transfers
+        2 wallets that hold 100 currency
+        1 exchange account with 0 balance
+    """
     wallet1 = Wallet(name="wallet1", write=False)
     wallet2 = Wallet(name="wallet2", write=False)
     exchange = Wallet(name="exchange", write=False)

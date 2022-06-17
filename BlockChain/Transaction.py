@@ -46,15 +46,16 @@ class Transaction:
     def sign_transaction(self, signature):
         self._signature = signature
 
-    """
-    Verifies with a public key from whom the data came that it was indeed 
-    signed by their private key
-    param: public_key_loc Path to public key
-    param: signature String signature to be verified
-    """
-
     @staticmethod
     def check_verified(data, signature, public_key):
+        """
+        Verifies with a public key from whom the data came that it was indeed
+        signed by their private key
+        :param data:
+        :param signature: String signature to be verified
+        :param public_key: Path to public key
+        :return:
+        """
         signature = bytes.fromhex(signature)
         data_hash = BlockChain.Utils.hash(data)
         publicKey = RSA.importKey(public_key)

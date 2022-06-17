@@ -15,12 +15,6 @@ class Node:
         self.keyfile = keyfile
 
         self.blockchain = Chain()
-
-        """
-        Default test accounts for chain transafers
-            2 wallets that hold 100 currency
-            1 exchange account with 0 balance
-        """
         # Initializer for the test wallet
         self.wallet = Wallet()
 

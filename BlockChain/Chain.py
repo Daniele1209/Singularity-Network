@@ -124,12 +124,11 @@ class Chain:
 
         return total
 
-    """
-    We have 2 cases of transaction, the transfer one and the stake
-    In the stake transaction the amount of coins that a user has is locked
-    """
-
     def execute_transaction(self, transaction):
+        """
+        We have 2 cases of transaction, the transfer one and the stake
+        In the stake transaction the amount of coins that a user has is locked
+        """
         if transaction.get_type() == "STAKE":
             sender = transaction.get_payer()
             receiver = transaction.get_payee()

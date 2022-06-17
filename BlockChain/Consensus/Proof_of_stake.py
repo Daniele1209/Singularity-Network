@@ -28,11 +28,10 @@ class ProofOfStake:
         else:
             self.stakers[public_key] = stake_amount
 
-    """
-    Generate lots for each staker using HASH CHAINING
-    """
-
     def buildLots(self, seed):
+        """
+        Generate lots for each staker using HASH CHAINING
+        """
         lot_list = []
 
         for validator in self.stakers.keys():
@@ -40,12 +39,11 @@ class ProofOfStake:
                 lot_list.append(Lot(validator, current_stake + 1, seed))
         return lot_list
 
-    """
-    Establish a winning lot based on which lot hash has the 
-    minimum offset to a random generated one
-    """
-
     def findWinner(self, lots, seed):
+        """
+        Establish a winning lot based on which lot hash has the
+        minimum offset to a random generated one
+        """
         winner_lot = None
         min_offset = None
 
@@ -62,11 +60,10 @@ class ProofOfStake:
                 winner_lot = lot
         return winner_lot
 
-    """
-    Returns the forger for the winning lot value
-    """
-
     def selectForger(self, last_block_hash):
+        """
+        Returns the forger for the winning lot value
+        """
         lots = self.buildLots(last_block_hash)
         winner_lot = self.findWinner(lots, last_block_hash)
 
