@@ -4,6 +4,10 @@ This is the cryptocurrency I'm working on
 # Formatting
 Use default `black` installation.
 
+# Installing
+Tools you need: [Poetry](https://python-poetry.org/), Python 3.9
+After installing poetry run `poetry install`
+
 # Running
 
 ## Generating Keys

@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "singularitycoin"
+version = "1.0.0"
+description = ""
+authors = ["sweethuman <gheo@sweethuman.tech>","Daniele <dany.mosh@yahoo.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+p2pnetwork = "^1.2"
+pyfiglet = "^0.8.post1"
+dynaconf = "^3.1.9"
+typing-extensions = "^4.2.0"
+overrides = "^6.1.0"
+requests = "^2.28.0"
+jsonpickle = "^2.2.0"
+Flask-Classful = "^0.14.2"
+Flask = "^2.1.2"
+pycryptodome = "^3.14.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
