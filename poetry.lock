@@ -75,14 +75,14 @@ dotenv = ["python-dotenv"]
 
 [[package]]
 name = "flask-classful"
-version = "0.14.2"
+version = "0.15.0b1"
 description = "Class based views for Flask"
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-Flask = ">=0.11,<0.12.3 || >0.12.3"
+Flask = ">=0.12.5"
 
 [[package]]
 name = "idna"
@@ -262,7 +262,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "e4973e6592cd79f8d2ff06d1c80f6916e126cee79bd0af10f8f62d46f9b420e3"
+content-hash = "f58fa7f419efb459dfcae58615de60db83b213ee680cb54bbe90ec2f3e9fd8ae"
 
 [metadata.files]
 certifi = [
@@ -290,8 +290,8 @@ flask = [
     {file = "Flask-2.1.2.tar.gz", hash = "sha256:315ded2ddf8a6281567edb27393010fe3406188bafbfe65a3339d5787d89e477"},
 ]
 flask-classful = [
-    {file = "Flask-Classful-0.14.2.tar.gz", hash = "sha256:ae0cabd3f69e1e16db3bf31f50862d3a5577244bfa0ace2b4612d10436e4bff7"},
-    {file = "Flask_Classful-0.14.2-py2.py3-none-any.whl", hash = "sha256:3a8f3c8fc549e37acf082f7b0ebf9e53dc35b0c9241c14f7d64433d4c1d629c9"},
+    {file = "Flask-Classful-0.15.0b1.tar.gz", hash = "sha256:a313f192134f4623dac33417e1db19b7b22cecfaf1d4d430313b9f6cfa9bd48d"},
+    {file = "Flask_Classful-0.15.0b1-py2.py3-none-any.whl", hash = "sha256:fc4d79717d536195ab775d42bf4e42533a5b4ea7869985bd6e5adcdae870c42f"},
 ]
 idna = [
     {file = "idna-3.3-py3-none-any.whl", hash = "sha256:84d9dd047ffa80596e0f246e2eab0b391788b0503584e8945f2368256d2735ff"},

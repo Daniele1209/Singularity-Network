@@ -17,7 +17,7 @@ class NodeAPI(FlaskView):
         self.node = node
 
     def start(self, ip: str, api_port: int):
-        NodeAPI.register(self.app, route_base="/")
+        NodeAPI.register(self.app, init_argument=self.node, route_base="/")
         self.app.run(host=ip, port=api_port)
 
     @route("/info", methods=["GET"])
