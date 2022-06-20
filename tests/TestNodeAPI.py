@@ -6,7 +6,7 @@ import BlockChain.Utils as Utls
 from BlockChain.Chain import Chain
 from BlockChain.Node import Node
 from BlockChain.Wallet.Wallet import Wallet
-from NodeAPI import NodeAPI
+from BlockChain.NodeAPI import NodeAPI
 
 
 class MyNodeAPITester(unittest.TestCase):
