@@ -1,4 +1,4 @@
-from AdditionalTypes import MESSAGE_TYPE
+from BlockChain.AdditionalTypes import MESSAGE_TYPE
 
 
 class Message:

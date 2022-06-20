@@ -2,7 +2,7 @@ import threading
 import time
 
 import BlockChain.Utils as Utls
-from AdditionalTypes import MESSAGE_TYPE
+from BlockChain.AdditionalTypes import MESSAGE_TYPE
 from .Message import Message
 from config import settings
 
