@@ -27,7 +27,9 @@ if __name__ == "__main__":
     """
     wallet1 = Wallet(name="wallet1", write=False)
     wallet2 = Wallet(name="wallet2", write=False)
-    exchange = Wallet(name="exchange", write=False)
+    exchange = Wallet(
+        name="exchange", write=False
+    )  # why is this the exchange account since wallet2 has genesis key
 
     wallet2.generateFromPair(
         settings.genesis_public_key_path, settings.genesis_private_key_path
