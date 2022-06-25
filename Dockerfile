@@ -17,5 +17,9 @@ COPY config.py .
 COPY settings.toml .
 
 ENV SINGULARITY_ORIGIN_IP="host.docker.internal"
+ENV SINGULARITY_HOST_PORT=10001
+ENV SINGULARITY_HOST_API_PORT=5000
+EXPOSE 10001
+EXPOSE 5000
 
 CMD ["python3", "-u", "-m", "BlockChain.Application"]
