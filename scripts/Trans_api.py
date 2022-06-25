@@ -1,6 +1,5 @@
-import requests
-
 import BlockChain.Utils
+import requests
 from BlockChain.AdditionalTypes import TRANSACTION_TYPE
 from BlockChain.Wallet.Wallet import Wallet
 from config import settings

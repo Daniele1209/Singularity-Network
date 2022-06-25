@@ -1,10 +1,11 @@
 import sys
 
+from config import settings
+
 from pyfiglet import figlet_format
 
 from BlockChain.Node import Node
 from BlockChain.NodeAPI import NodeAPI
-from config import settings
 
 
 class UI:

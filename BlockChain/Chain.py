@@ -3,15 +3,16 @@ from typing import List
 import BlockChain.Utils
 from BlockChain.Account_model import AccountModel
 from BlockChain.Block import *
+from config import settings
+
 from BlockChain.Consensus.Proof_of_stake import ProofOfStake
 from BlockChain.Exceptions import (
-    TransactionValidationError,
-    BlockValidationError,
     BlockProcessingError,
+    BlockValidationError,
+    TransactionValidationError,
 )
 from BlockChain.Transaction import Transaction
 from BlockChain.Wallet.Wallet import Wallet
-from config import settings
 
 
 class Chain:

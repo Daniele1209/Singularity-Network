@@ -1,10 +1,11 @@
 import threading
 import time
 
+from config import settings
+
 import BlockChain.Utils as Utls
 from BlockChain.AdditionalTypes import MESSAGE_TYPE
 from .Message import Message
-from config import settings
 
 
 # Sub-module of Socket Communication

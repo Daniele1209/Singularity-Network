@@ -1,6 +1,7 @@
+from config import settings
+
 import BlockChain.Utils
 from .Lot import Lot
-from config import settings
 
 BASE_OF_HASH_DIGEST = 16
 

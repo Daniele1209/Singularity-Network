@@ -1,9 +1,11 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from flask import Flask, jsonify, request
 from flask_classful import FlaskView, route
 
 import BlockChain.Utils as Utls
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from BlockChain.Node import Node

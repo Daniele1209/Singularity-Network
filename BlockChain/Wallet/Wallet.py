@@ -1,13 +1,13 @@
 import os.path
 
 import Crypto
+from config import settings
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
 
 from BlockChain.Block import Block
 from BlockChain.Transaction import Transaction
 from BlockChain.Utils import hash
-from config import settings
 
 
 class Wallet:

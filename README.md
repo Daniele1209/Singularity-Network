@@ -6,7 +6,7 @@ Use default `black` installation.
 
 # Installing
 Tools you need: [Poetry](https://python-poetry.org/), Python 3.9
-After installing poetry run `poetry install`
+After installing poetry run `poetry install`, and to install git hooks run command `pre-commit install`
 
 # Running
 
