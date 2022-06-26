@@ -1,0 +1,67 @@
+version: "3"
+services:
+  origin-node:
+    image: singularitycoin:latest
+    ports:
+      - "5000:5000"
+      - "10001:10001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - singularitycoinnet
+    environment:
+      SINGULARITY_ORIGIN_IP: "origin-node"
+  secondary-node:
+    image: singularitycoin:latest
+    depends_on:
+      - origin-node
+    ports:
+      - "5000"
+      - "10001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - singularitycoinnet
+    environment:
+      SINGULARITY_ORIGIN_IP: "origin-node"
+  third-node:
+    image: singularitycoin:latest
+    depends_on:
+      - origin-node
+    ports:
+      - "5000"
+      - "10001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - singularitycoinnet
+    environment:
+      SINGULARITY_ORIGIN_IP: "origin-node"
+  fourth-node:
+    image: singularitycoin:latest
+    depends_on:
+      - origin-node
+    ports:
+      - "5000"
+      - "10001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - singularitycoinnet
+    environment:
+      SINGULARITY_ORIGIN_IP: "origin-node"
+  fifth-node:
+    image: singularitycoin:latest
+    depends_on:
+      - origin-node
+    ports:
+      - "5000"
+      - "10001"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - singularitycoinnet
+    environment:
+      SINGULARITY_ORIGIN_IP: "origin-node"
+networks:
+  singularitycoinnet:
