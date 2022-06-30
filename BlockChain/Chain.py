@@ -35,7 +35,7 @@ class Chain:
         self.chain: List[Block] = []
         self.pendingTransactions: List[Transaction] = []
         # self._blockSize = block_size
-        self._blockSize = 1
+        self._blockSize = 3
         self._minimum_fee = minimum_fee
         # Defining the first block in the chain
         self.genesis_hash = self.genesis()
@@ -129,7 +129,6 @@ class Chain:
             self.process_block(new_block)
         except Exception:
             new_block = None
-            raise BlockProcessingError("Block failed to create !")
         # return it in order to broadcast it as an update
         return new_block
 

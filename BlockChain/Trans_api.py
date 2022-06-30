@@ -28,10 +28,12 @@ if __name__ == "__main__":
     exchange = Wallet(name="exchange", write=False)
 
     wallet2.generateFromPair("../Keys/PublicKey.pem", "../Keys/PrivateKey.pem")
-    wallet1.generateFromPair("../Keys/#_PublicKey.pem", "../Keys/#_PrivateKey.pem")
+    wallet1.generateFromPair(
+        "../Keys/test1_PublicKey.pem", "../Keys/test1_PrivateKey.pem"
+    )
 
-    postTransaction(exchange, wallet2, 100, "EXCHANGE")
-    postTransaction(exchange, wallet1, 100, "EXCHANGE")
+    postTransaction(exchange, wallet2, 200, "EXCHANGE")
+    postTransaction(exchange, wallet1, 200, "EXCHANGE")
     postTransaction(exchange, wallet1, 10, "EXCHANGE")
 
     postTransaction(wallet1, wallet1, 25, "STAKE")

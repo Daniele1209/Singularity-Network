@@ -62,13 +62,13 @@ class Node:
             self.request_chain()
 
         if self.blockchain.check_block_identity(block):
-            if self.blockchain.push_block(block):
+            self.blockchain.push_block(block)
 
-                message = Message(self.p2p.socketConnector, "BLOCK", block)
-                # Encode the message
-                message_encoded = Utils.encode(message)
-                # Broadcast the encoded message
-                self.p2p.broadcast(message_encoded)
+            # message = Message(self.p2p.socketConnector, "BLOCK", block)
+            # # Encode the message
+            # message_encoded = Utils.encode(message)
+            # # Broadcast the encoded message
+            # self.p2p.broadcast(message_encoded)
 
     # notifies the blockchain that is time to forge a new block
     def forge_block(self):
@@ -77,9 +77,10 @@ class Node:
         if chosen_forger == self.wallet.get_public_key():
             print("I am the chosen forger")
             new_block = self.blockchain.create_block(self.wallet)
-            message = Message(self.p2p.socketConnector, "BLOCK", new_block)
-            encoded_message = Utils.encode(message)
-            self.p2p.broadcast(encoded_message)
+            if new_block != None:
+                message = Message(self.p2p.socketConnector, "BLOCK", new_block)
+                encoded_message = Utils.encode(message)
+                self.p2p.broadcast(encoded_message)
 
     # request the blockchain from other nodes
     def request_chain(self):
