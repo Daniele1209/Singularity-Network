@@ -10,6 +10,8 @@ from Exceptions import TransactionValidationError
 from P2P.Message import Message
 import Utils
 
+import copy
+
 
 class Node:
     def __init__(self, ip, port, keyfile):
@@ -53,21 +55,20 @@ class Node:
         # signature_valid = Wallet.check_verified(
         #     block.payload(), block.get_signature(), block.get_forger()
         # )
-        # if signature_valid:
 
         # check of a a blockchain is in sync with the network
         # if not, update the blocks
         if not self.blockchain.check_block_count(block):
-            print("BLOCKCHAIN REQUEST")
             self.request_chain()
 
-        self.blockchain.push_block(block)
+        if self.blockchain.check_block_identity(block):
+            if self.blockchain.push_block(block):
 
-        message = Message(self.p2p.socketConnector, "BLOCK", block)
-        # Encode the message
-        message_encoded = Utils.encode(message)
-        # Broadcast the encoded message
-        self.p2p.broadcast(message_encoded)
+                message = Message(self.p2p.socketConnector, "BLOCK", block)
+                # Encode the message
+                message_encoded = Utils.encode(message)
+                # Broadcast the encoded message
+                self.p2p.broadcast(message_encoded)
 
     # notifies the blockchain that is time to forge a new block
     def forge_block(self):
@@ -95,10 +96,18 @@ class Node:
     # update current blockchain from fetched one
     def handle_received_blockchain(self, blockchain):
         self.blockchain.sync_chain(blockchain)
+        # localBlockchainCopy = copy.deepcopy(self.blockchain)
+        # localBlockCount = len(localBlockchainCopy.chain)
+        # receivedChainBlockCount = len(blockchain.chain)
+        # if localBlockCount < receivedChainBlockCount:
+        #     for blockNumber, block in enumerate(blockchain.chain):
+        #         if blockNumber >= localBlockCount:
+        #             localBlockchainCopy.push_block(block)
+        #     self.blockchain = localBlockchainCopy
 
-    def startP2P(self):
+    def startP2P(self, ip: str = "localhost", port: int = 10001):
         self.p2p = SocketCommunication(self.ip, self.port)
-        self.p2p.startSocketCommunication(self)
+        self.p2p.startSocketCommunication(self, ip, port)
 
     def startAPI(self, api_port):
         self.api = NodeAPI()

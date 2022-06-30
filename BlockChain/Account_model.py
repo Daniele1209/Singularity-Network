@@ -17,6 +17,9 @@ class AccountModel:
     def get_accounts(self):
         return self._accounts
 
+    def get_balances(self):
+        return self._balances
+
     def add_account(self, account_publicKey):
         if account_publicKey not in self._accounts:
             self._accounts.append(account_publicKey)

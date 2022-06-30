@@ -47,9 +47,9 @@ class Chain:
 
     # when we download and sync all the blockchain history
     def sync_chain(self, current_chain):
-        self.chain = current_chain.chain
-        self.pendingTransactions = current_chain.pendingTransactions
-        self.account_model = current_chain.account_model
+        self.chain = copy.deepcopy(current_chain.chain)
+        self.pendingTransactions = copy.deepcopy(current_chain.pendingTransactions)
+        self.account_model = copy.deepcopy(current_chain.account_model)
 
     def genesis(self):
         block_to_add = Block(
@@ -68,6 +68,12 @@ class Chain:
     def get_wallet_data(self, wallet_address):
         if wallet_address in self.account_model.get_accounts():
             return self.account_model.get_balance(wallet_address)
+
+    def get_block_count(self):
+        return len(self.chain)
+
+    def get_stake_amount(self):
+        return self.pos.get_stakers()
 
     def get_last_hash(self):
         return Utils.hash(self._last_block.payload()).hexdigest()
@@ -153,7 +159,7 @@ class Chain:
                 stake_amount = transaction.get_amount()
                 self.pos.update(sender, stake_amount)
                 # update account balance, locking the staked amount
-                self.account_model.balance_update(sender, stake_amount)
+                self.account_model.balance_update(sender, -stake_amount)
         else:
             sender_account = transaction.get_payer()
             receiver_account = transaction.get_payee()
@@ -206,8 +212,13 @@ class Chain:
         if block.get_index() == 0:
             if block.getHash == self.genesis_hash:
                 raise BlockValidationError("Block hash invalid ! Same as genesis")
-        if block.get_index() != self._last_block.get_index() + 1:
-            raise BlockValidationError("Block index does not belong to the sequence")
+        if int(block.get_index()) != int(self.chain[-1].get_index()) + 1:
+            raise BlockValidationError(
+                "Block indexes are not the same ! Current -> "
+                + str(block.get_index())
+                + " Expected -> "
+                + str(self.chain[-1].get_index() + 1)
+            )
         if len(block.get_transactions()) > block_size:
             raise BlockValidationError("Transaction number exceeds the max !")
 
@@ -252,6 +263,12 @@ class Chain:
         if self.chain[-1].get_index() == block.get_index() - 1:
             return True
         return False
+
+    def check_block_identity(self, block):
+        for currrent_block in self.chain:
+            if currrent_block.toJson() == block.toJson():
+                return False
+        return True
 
     def last_index(self):
         return self._last_block.get_index()

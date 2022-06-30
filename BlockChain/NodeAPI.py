@@ -1,3 +1,4 @@
+from crypt import methods
 import errno
 from glob import glob
 from urllib import response
@@ -53,3 +54,11 @@ class NodeAPI(FlaskView):
         node.handle_transaction(transaction)
         response = {"message": "Received transaction"}
         return jsonify(response), 201
+
+    @route("/balance", methods=["GET"])
+    def get_balance(self):
+        return node.blockchain.account_model.get_balances()
+
+    @route("/stake", methods=["GET"])
+    def get_stakes(self):
+        return node.blockchain.get_stake_amount()

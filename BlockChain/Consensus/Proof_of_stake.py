@@ -8,6 +8,9 @@ class ProofOfStake:
         self.stakers = {}
         self.set_genesisStake()
 
+    def get_stakers(self):
+        return self.stakers
+
     def get_stake(self, public_key):
         if public_key in self.stakers.keys():
             return self.stakers[public_key]

@@ -16,11 +16,11 @@ class SocketCommunication(Node):
         self.socketConnector = SocketConnector(ip, port)
 
     # Open the port
-    def startSocketCommunication(self, node):
+    def startSocketCommunication(self, node, ip, port):
         self.node = node
         self.start()
         self.peerDiscoveryHandler.start()
-        self.connect_originNode()
+        self.connect_originNode(ip, port)
 
     def inbound_node_connected(self, node):
         self.peerDiscoveryHandler.handshake(node)
@@ -28,11 +28,14 @@ class SocketCommunication(Node):
     def outbound_node_connected(self, node):
         self.peerDiscoveryHandler.handshake(node)
 
-    def connect_originNode(self):
-        if self.socketConnector.get_port() != 10001:
-            self.connect_with_node("localhost", 10001)
+    def connect_originNode(self, ip, port):
+        if (
+            self.socketConnector.get_ip() != ip
+            or self.socketConnector.get_port() != port
+        ):
+            self.connect_with_node(ip, port)
 
-    def node_message(self, node, data):
+    def node_message(self, conn_node, data):
         message = Utls.decode(json.dumps(data))
         if message.message_type == "DISCOVERY":
             self.peerDiscoveryHandler.handle_message(message)
@@ -41,9 +44,11 @@ class SocketCommunication(Node):
             self.node.handle_transaction(transaction)
         elif message.message_type == "BLOCK":
             block = message.data
+            print("\nGOT BLOCK\n")
+            print(str(block.toJson()))
             self.node.handle_block(block)
         elif message.message_type == "BLOCKCHAINREQUEST":
-            self.node.handle_chain_request(node)
+            self.node.handle_chain_request(conn_node)
         elif message.message_type == "BLOCKCHAIN":
             blockchain = message.data
             self.node.handle_received_blockchain(blockchain)

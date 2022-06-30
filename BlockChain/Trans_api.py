@@ -28,6 +28,7 @@ if __name__ == "__main__":
     exchange = Wallet(name="exchange", write=False)
 
     wallet2.generateFromPair("../Keys/PublicKey.pem", "../Keys/PrivateKey.pem")
+    wallet1.generateFromPair("../Keys/#_PublicKey.pem", "../Keys/#_PrivateKey.pem")
 
     postTransaction(exchange, wallet2, 100, "EXCHANGE")
     postTransaction(exchange, wallet1, 100, "EXCHANGE")
@@ -35,4 +36,9 @@ if __name__ == "__main__":
 
     postTransaction(wallet1, wallet1, 25, "STAKE")
     postTransaction(wallet2, wallet1, 10, "TRANSFER")
-    postTransaction(wallet2, wallet1, 10, "TRANSFER")
+    postTransaction(wallet1, wallet2, 10, "TRANSFER")
+
+    # changes the forger to wallet 1
+    postTransaction(wallet1, wallet2, 50, "TRANSFER")
+    postTransaction(wallet2, wallet1, 40, "TRANSFER")
+    postTransaction(wallet1, wallet2, 30, "TRANSFER")
