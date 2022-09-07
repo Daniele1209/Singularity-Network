@@ -1,14 +1,9 @@
-from email import message
-from quopri import encodestring
-from Chain import Chain
-from Wallet.Wallet import Wallet
-from P2P.SocketCommunication import SocketCommunication
-from NodeAPI import NodeAPI
-from Block import Block
-
-from Exceptions import TransactionValidationError
-from P2P.Message import Message
-import Utils
+import BlockChain.Utils
+from BlockChain.Block import Block
+from BlockChain.Chain import Chain
+from BlockChain.P2P.Message import Message
+from BlockChain.P2P.SocketCommunication import SocketCommunication
+from BlockChain.Wallet.Wallet import Wallet
 
 
 class Node:
@@ -19,12 +14,6 @@ class Node:
         self.keyfile = keyfile
 
         self.blockchain = Chain()
-
-        """
-        Default test accounts for chain transafers
-            2 wallets that hold 100 currency
-            1 exchange account with 0 balance
-        """
         # Initializer for the test wallet
         self.wallet = Wallet()
 
@@ -42,7 +31,7 @@ class Node:
             self.blockchain.insert_transaction(transaction)
             message = Message(self.p2p.socketConnector, "TRANSACTION", transaction)
             # Encode the message
-            message_encoded = Utils.encode(message)
+            message_encoded = BlockChain.Utils.encode(message)
             # Broadcast the encoded message
             self.p2p.broadcast(message_encoded)
             # Check if a new forger is required
@@ -65,7 +54,7 @@ class Node:
 
         message = Message(self.p2p.socketConnector, "BLOCK", block)
         # Encode the message
-        message_encoded = Utils.encode(message)
+        message_encoded = BlockChain.Utils.encode(message)
         # Broadcast the encoded message
         self.p2p.broadcast(message_encoded)
 
@@ -77,30 +66,25 @@ class Node:
             print("I am the chosen forger")
             new_block = self.blockchain.create_block(self.wallet)
             message = Message(self.p2p.socketConnector, "BLOCK", new_block)
-            encoded_message = Utils.encode(message)
+            encoded_message = BlockChain.Utils.encode(message)
             self.p2p.broadcast(encoded_message)
 
     # request the blockchain from other nodes
     def request_chain(self):
         message = Message(self.p2p.socketConnector, "BLOCKCHAINREQUEST", None)
-        encoded_message = Utils.encode(message)
+        encoded_message = BlockChain.Utils.encode(message)
         self.p2p.broadcast(encoded_message)
 
     # send blockchain data to a certain node
     def handle_chain_request(self, request_node):
         message = Message(self.p2p.socketConnector, "BLOCKCHAIN", self.blockchain)
-        encoded_message = Utils.encode(message)
+        encoded_message = BlockChain.Utils.encode(message)
         self.p2p.send(request_node, encoded_message)
 
     # update current blockchain from fetched one
     def handle_received_blockchain(self, blockchain):
         self.blockchain.sync_chain(blockchain)
 
-    def startP2P(self):
+    def startP2P(self, ip: str = "localhost", port: int = 10001):
         self.p2p = SocketCommunication(self.ip, self.port)
-        self.p2p.startSocketCommunication(self)
-
-    def startAPI(self, api_port):
-        self.api = NodeAPI()
-        self.api.inject_node(self)
-        self.api.start(api_port)
+        self.p2p.start_socket_communication(self, ip, port)

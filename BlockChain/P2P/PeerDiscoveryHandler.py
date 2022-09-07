@@ -1,8 +1,12 @@
-import time
 import threading
+import time
 
+from config import settings
+
+import BlockChain.Utils as Utls
+from BlockChain.AdditionalTypes import MESSAGE_TYPE
 from .Message import Message
-import Utils as Utls
+
 
 # Sub-module of Socket Communication
 # Frequently connect to the whole network to see if there are new nodes
@@ -15,14 +19,14 @@ class PeerDiscoveryHandler:
         while True:
             handshakeMessage = self.handshake_message()
             self.socketCommunication.broadcast(handshakeMessage)
-            time.sleep(10)
+            time.sleep(settings.delay_between_p2p_network_discovery_seconds)
 
     def status(self):
         while True:
             print("Current connections: ")
             for peer in self.socketCommunication.peers:
                 print(f"ip: {peer.ip} | port: {peer.port}")
-            time.sleep(10)
+            time.sleep(settings.delay_between_p2p_network_discovery_seconds)
 
     # start discovery and status in their own thread
     def start(self):
@@ -40,7 +44,7 @@ class PeerDiscoveryHandler:
         socket_connector = self.socketCommunication.socketConnector
         peers = self.socketCommunication.peers
         data = peers
-        message_type = "DISCOVERY"
+        message_type: MESSAGE_TYPE = "DISCOVERY"
         message = Message(socket_connector, message_type, data)
 
         encoded_message = Utls.encode(message)

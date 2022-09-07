@@ -1,6 +1,3 @@
-from Exceptions import AccountModelError
-
-
 class AccountModel:
     def __init__(self):
         self._accounts = []

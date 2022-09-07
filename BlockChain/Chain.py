@@ -1,33 +1,18 @@
 from typing import List
 
-import requests
+import BlockChain.Utils
+from BlockChain.Account_model import AccountModel
+from BlockChain.Block import *
+from config import settings
 
-
-from Exceptions import (
-    TransactionValidationError,
-    BlockValidationError,
+from BlockChain.Consensus.Proof_of_stake import ProofOfStake
+from BlockChain.Exceptions import (
     BlockProcessingError,
-    AccountModelError,
+    BlockValidationError,
+    TransactionValidationError,
 )
-from Config import genesis_dev_address, block_size, minimum_fee
-
-from P2P.Message import Message
-
-from Block import *
-from Transaction import Transaction
-from Block_chooser import BlockChooser
-from Wallet.Wallet import Wallet
-from Account_model import AccountModel
-from Consensus.Proof_of_stake import ProofOfStake
-import Utils
-
-from Crypto.Hash import SHA, MD5
-from Crypto.PublicKey import RSA
-from Crypto.Signature import PKCS1_v1_5
-from urllib.parse import urlparse
-import binascii
-import logging
-import copy
+from BlockChain.Transaction import Transaction
+from BlockChain.Wallet.Wallet import Wallet
 
 
 class Chain:
@@ -36,7 +21,7 @@ class Chain:
         self.pendingTransactions: List[Transaction] = []
         # self._blockSize = block_size
         self._blockSize = 1
-        self._minimum_fee = minimum_fee
+        self._minimum_fee = settings.minimum_fee
         # Defining the first block in the chain
         self.genesis_hash = self.genesis()
 
@@ -56,7 +41,7 @@ class Chain:
             index=0,
             previousHash=0,
             transactions=[Transaction(1, "Genesis", "Viniele", 0)],
-            forger=genesis_dev_address,
+            forger=settings.genesis_dev_address,
         )
         self.chain.append(block_to_add)
         return block_to_add.getHash
@@ -70,7 +55,7 @@ class Chain:
             return self.account_model.get_balance(wallet_address)
 
     def get_last_hash(self):
-        return Utils.hash(self._last_block.payload()).hexdigest()
+        return BlockChain.Utils.hash(self._last_block.payload()).hexdigest()
 
     def insert_transaction(self, transaction: Transaction):
         # check transaction signature
@@ -140,12 +125,11 @@ class Chain:
 
         return total
 
-    """
-    We have 2 cases of transaction, the transfer one and the stake
-    In the stake transaction the amount of coins that a user has is locked
-    """
-
     def execute_transaction(self, transaction):
+        """
+        We have 2 cases of transaction, the transfer one and the stake
+        In the stake transaction the amount of coins that a user has is locked
+        """
         if transaction.get_type() == "STAKE":
             sender = transaction.get_payer()
             receiver = transaction.get_payee()
@@ -208,7 +192,7 @@ class Chain:
                 raise BlockValidationError("Block hash invalid ! Same as genesis")
         if block.get_index() != self._last_block.get_index() + 1:
             raise BlockValidationError("Block index does not belong to the sequence")
-        if len(block.get_transactions()) > block_size:
+        if len(block.get_transactions()) > settings.block_size:
             raise BlockValidationError("Transaction number exceeds the max !")
 
         # check the validity of the forger
