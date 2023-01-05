@@ -1,5 +1,5 @@
 # SingularityCoin
-This is the cryptocurrency I'm working on
+`Singularity Network` is my minimal implementation of a PoS based Blockchain, written in Python. This is my Bachelor Thesis project and it is available as an open source project on Github. It uses P2P communication in order to handle the decentralized aspect of the chain. The Lottery PoS system is done by using hash chaining and it has an API system for user communication - written using Flask
 
 # Formatting
 Use default `black` installation.
