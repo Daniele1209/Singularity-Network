@@ -1,14 +1,26 @@
-from p2pnetwork.node import Node
-import json
+from __future__ import annotations
 
-from .SocketConnector import SocketConnector
+import json
+from typing import List, TYPE_CHECKING
+
+from overrides import overrides
+from p2pnetwork.node import Node
+
+from BlockChain.Utils import decode
 from .PeerDiscoveryHandler import PeerDiscoveryHandler
 from .SocketConnector import SocketConnector
-from .Message import Message
-import Utils as Utls
+
+if TYPE_CHECKING:
+    from BlockChain.Node import Node as SingularityNode
+    from BlockChain.P2P.Message import Message
 
 
 class SocketCommunication(Node):
+    peers: List[SocketConnector]
+    peerDiscoveryHandler: PeerDiscoveryHandler
+    socketConnector: SocketConnector
+    node: SingularityNode
+
     def __init__(self, ip, port):
         super(SocketCommunication, self).__init__(ip, port, None)
         self.peers = []
@@ -16,27 +28,30 @@ class SocketCommunication(Node):
         self.socketConnector = SocketConnector(ip, port)
 
     # Open the port
-    def startSocketCommunication(self, node, ip, port):
+    def start_socket_communication(self, node: SingularityNode, ip: str, port: int):
         self.node = node
         self.start()
         self.peerDiscoveryHandler.start()
-        self.connect_originNode(ip, port)
+        self.__connect_origin_node(ip, port)
 
+    @overrides
     def inbound_node_connected(self, node):
         self.peerDiscoveryHandler.handshake(node)
 
+    @overrides
     def outbound_node_connected(self, node):
         self.peerDiscoveryHandler.handshake(node)
 
-    def connect_originNode(self, ip, port):
+    def __connect_origin_node(self, ip: str, port: int):
         if (
             self.socketConnector.get_ip() != ip
             or self.socketConnector.get_port() != port
         ):
             self.connect_with_node(ip, port)
 
-    def node_message(self, conn_node, data):
-        message = Utls.decode(json.dumps(data))
+    @overrides
+    def node_message(self, node, data):
+        message: Message = decode(json.dumps(data))
         if message.message_type == "DISCOVERY":
             self.peerDiscoveryHandler.handle_message(message)
         elif message.message_type == "TRANSACTION":

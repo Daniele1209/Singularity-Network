@@ -1,5 +1,0 @@
-p2pnetwork >= 1.1
-pyfiglet >= 0.8.post1
-pycryptodome >= 3.14.1
-flask >= 2.1.1
-flask_classful >= 0.14.2

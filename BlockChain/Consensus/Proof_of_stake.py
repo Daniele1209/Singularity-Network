@@ -1,5 +1,9 @@
+from config import settings
+
+import BlockChain.Utils
 from .Lot import Lot
-import Utils
+
+BASE_OF_HASH_DIGEST = 16
 
 
 class ProofOfStake:
@@ -18,7 +22,7 @@ class ProofOfStake:
 
     # set the first stake in the staker list, so we do not have an empty list
     def set_genesisStake(self):
-        genesis_account_public = open("../Keys/PublicKey.pem", "r").read()
+        genesis_account_public = open(settings.genesis_public_key_path, "r").read()
         self.stakers[genesis_account_public] = 1
 
     # used to set the stake amount and add to staker accounts
@@ -28,11 +32,10 @@ class ProofOfStake:
         else:
             self.stakers[public_key] = stake_amount
 
-    """
-    Generate lots for each staker using HASH CHAINING
-    """
-
     def buildLots(self, seed):
+        """
+        Generate lots for each staker using HASH CHAINING
+        """
         lot_list = []
 
         for validator in self.stakers.keys():
@@ -40,19 +43,20 @@ class ProofOfStake:
                 lot_list.append(Lot(validator, current_stake + 1, seed))
         return lot_list
 
-    """
-    Establish a winning lot based on which lot hash has the 
-    minimum offset to a random generated one
-    """
-
     def findWinner(self, lots, seed):
+        """
+        Establish a winning lot based on which lot hash has the
+        minimum offset to a random generated one
+        """
         winner_lot = None
         min_offset = None
 
-        generated_hash = int(Utils.hash(seed).hexdigest(), 16)
+        generated_hash = int(
+            BlockChain.Utils.hash(seed).hexdigest(), BASE_OF_HASH_DIGEST
+        )
 
         for lot in lots:
-            lot_to_int = int(lot.lotHash(), 16)
+            lot_to_int = int(lot.lotHash(), BASE_OF_HASH_DIGEST)
             offset = abs(lot_to_int - generated_hash)
 
             if min_offset is None or offset < min_offset:
@@ -60,11 +64,10 @@ class ProofOfStake:
                 winner_lot = lot
         return winner_lot
 
-    """
-    Returns the forger for the winning lot value
-    """
-
     def selectForger(self, last_block_hash):
+        """
+        Returns the forger for the winning lot value
+        """
         lots = self.buildLots(last_block_hash)
         winner_lot = self.findWinner(lots, last_block_hash)
 

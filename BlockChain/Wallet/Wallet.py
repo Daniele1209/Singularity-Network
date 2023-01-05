@@ -1,13 +1,13 @@
+import os.path
+
 import Crypto
+from config import settings
 from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5
-import binascii
-import sys
 
-from Utils import hash, encode, decode
-
-from Block import Block
-from Transaction import Transaction
+from BlockChain.Block import Block
+from BlockChain.Transaction import Transaction
+from BlockChain.Utils import hash
 
 
 class Wallet:
@@ -57,9 +57,19 @@ class Wallet:
         }
 
         if self.write:
-            file_out = open("../Keys/" + self._name + "_PrivateKey.pem", "wb")
+            file_out = open(
+                os.path.join(
+                    settings.wallet_keys_folder, self._name + "_PrivateKey.pem"
+                ),
+                "wb",
+            )
             file_out.write(private_key.export_key())
-            file_out = open("../Keys/" + self._name + "_PublicKey.pem", "wb")
+            file_out = open(
+                os.path.join(
+                    settings.wallet_keys_folder, self._name + "_PublicKey.pem"
+                ),
+                "wb",
+            )
             file_out.write(public_key.export_key())
 
         self._privateKey = key_pair["private_key"]
@@ -86,15 +96,16 @@ class Wallet:
         signature = signature_object.sign(hash_data)
         return signature.hex()
 
-    """
-    Verifies with a public key from whom the data came that it was indeed 
-    signed by their private key
-    param: public_key_loc Path to public key
-    param: signature String signature to be verified
-    """
-
     @staticmethod
     def check_verified(data, signature, public_key):
+        """
+        Verifies with a public key from whom the data came that it was indeed
+        signed by their private key
+        :param data:
+        :param signature: String signature to be verified
+        :param public_key: Path to public key
+        :return:
+        """
         signature = bytes.fromhex(signature)
         data_hash = hash(data)
         publicKey = RSA.importKey(public_key)
