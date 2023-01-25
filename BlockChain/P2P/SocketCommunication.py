@@ -53,7 +53,9 @@ class SocketCommunication(Node):
     def node_message(self, node, data):
         message: Message = decode(json.dumps(data))
         if message.message_type == "DISCOVERY":
-            self.peerDiscoveryHandler.handle_message(message)
+            has_paired = self.peerDiscoveryHandler.handle_message(message)
+            if has_paired:
+                self.node.request_chain()
         elif message.message_type == "TRANSACTION":
             transaction = message.data
             self.node.handle_transaction(transaction)

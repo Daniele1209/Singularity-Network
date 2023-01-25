@@ -73,3 +73,5 @@ class PeerDiscoveryHandler:
                 self.socketCommunication.socketConnector
             ):
                 self.socketCommunication.connect_with_node(peersPeer.ip, peersPeer.port)
+
+        return new_peer
