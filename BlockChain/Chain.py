@@ -35,6 +35,12 @@ class Chain:
         self.pendingTransactions = copy.deepcopy(current_chain.pendingTransactions)
         self.account_model = copy.deepcopy(current_chain.account_model)
 
+    def rollback(self):
+        if len(self.chain) > 1:
+            self.chain.pop()
+            return True
+        return False
+
     def genesis(self):
         block_to_add = Block(
             index=0,
@@ -76,6 +82,7 @@ class Chain:
             for pool_transaction in self.pendingTransactions:
                 if transaction.equals(pool_transaction):
                     self.pendingTransactions.remove(pool_transaction)
+                    print("DELETED ", pool_transaction)
 
     def push_block(self, block):
         if self.block_validation(block):
@@ -85,24 +92,6 @@ class Chain:
             return True
         return False
 
-    # used in order to update the chain state when new block data occurs
-    def process_block(self, block):
-        fees = 0.0
-        if self.block_validation(block):
-            for transaction in block.get_transactions():
-                fees += transaction.get_fee()
-            self.push_block(block)
-            self.remove_transactions(block.get_transactions())
-            # reward_transaction = self.unsigned_transaction(
-            #     fees,
-            #     genesis_dev_address,
-            #     block.get_forger(),
-            #     fee=minimum_fee,
-            #     type="REWARD",
-            # )
-            # self.pendingTransactions.append(reward_transaction)
-        return True
-
     def create_block(self, forget_wallet: Wallet):
         new_block = forget_wallet.createBlock(
             len(self.chain),
@@ -110,8 +99,10 @@ class Chain:
             self.get_last_hash(),
         )
         try:
-            self.process_block(new_block)
-        except Exception:
+            self.push_block(new_block)
+            print("!!! BLOCK DONE")
+        except Exception as err:
+            print("Block creation err: ", err)
             new_block = None
         # return it in order to broadcast it as an update
         return new_block
@@ -196,6 +187,8 @@ class Chain:
                 raise BlockValidationError("Block hash invalid ! Same as genesis")
 
         if int(block.get_index()) != int(self.chain[-1].get_index()) + 1:
+            # print("ERR BLOCK ", block.toJson())
+            # print("ERR LAST BLOCK ", self.chain[-1].toJson())
             raise BlockValidationError(
                 "Block indexes are not the same ! Current -> "
                 + str(block.get_index())

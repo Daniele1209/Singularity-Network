@@ -3,6 +3,7 @@ import requests
 from BlockChain.AdditionalTypes import TRANSACTION_TYPE
 from BlockChain.Wallet.Wallet import Wallet
 from config import settings
+import time
 
 
 def post_transaction(
@@ -44,9 +45,13 @@ if __name__ == "__main__":
     post_transaction(exchange, wallet1, 100, "EXCHANGE")
     post_transaction(exchange, wallet1, 10, "EXCHANGE")
 
+    time.sleep(3)
+
     post_transaction(wallet1, wallet1, 25, "STAKE")
     post_transaction(wallet2, wallet1, 10, "TRANSFER")
     post_transaction(wallet2, wallet1, 10, "TRANSFER")
+
+    time.sleep(3)
 
     # changes the forger to wallet 1
     post_transaction(wallet1, wallet2, 50, "TRANSFER")

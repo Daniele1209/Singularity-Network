@@ -85,9 +85,9 @@ class Block:
         data["index"] = self._index
         data["previousHash"] = self._previousHash
         data["transactions"] = transactions
-        data["timeStamp"] = self._timeStamp
+        # data["timeStamp"] = self._timeStamp
         data["forger"] = self._forger
-        data["signature"] = self._signature
+        # data["signature"] = self._signature
         return data
 
     @staticmethod
