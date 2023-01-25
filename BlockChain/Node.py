@@ -38,6 +38,7 @@ class Node:
             self.p2p.broadcast(message_encoded)
             # Check if a new forger is required
             if self.blockchain.forger_required():
+                print("NEED FORGER")
                 self.forge_block()
 
     def handle_block(self, block: Block):

@@ -19,7 +19,6 @@ class Chain:
     def __init__(self):
         self.chain: List[Block] = []
         self.pendingTransactions: List[Transaction] = []
-        # self._blockSize = block_size
         self._blockSize = 3
         self._minimum_fee = settings.minimum_fee
 
@@ -180,7 +179,7 @@ class Chain:
     # check if a certain amount of transactions have been reached in the pool
     # this signals if the time for a new forger has come
     def forger_required(self):
-        if len(self.pendingTransactions) >= self._blockSize:
+        if len(self.pendingTransactions) >= settings.block_size:
             return True
         return False
 

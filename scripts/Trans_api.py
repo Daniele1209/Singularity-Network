@@ -31,7 +31,7 @@ if __name__ == "__main__":
     )  # why is this the exchange account since wallet2 has genesis key
 
     exchange.generateFromPair(
-        "../Keys/PublicKey.pem", "../Keys/PrivateKey.pem"
+        "../Keys/exchange_PublicKey.pem", "../Keys/exchange_PrivateKey.pem"
     )
     wallet2.generateFromPair(
         "../Keys/test2_PublicKey.pem", "../Keys/test2_PrivateKey.pem"
