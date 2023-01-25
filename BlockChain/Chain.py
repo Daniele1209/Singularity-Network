@@ -19,7 +19,6 @@ class Chain:
     def __init__(self):
         self.chain: List[Block] = []
         self.pendingTransactions: List[Transaction] = []
-        self._blockSize = 3
         self._minimum_fee = settings.minimum_fee
 
         # Defining the first block in the chain

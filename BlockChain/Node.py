@@ -38,7 +38,6 @@ class Node:
             self.p2p.broadcast(message_encoded)
             # Check if a new forger is required
             if self.blockchain.forger_required():
-                print("NEED FORGER")
                 self.forge_block()
 
     def handle_block(self, block: Block):
@@ -55,11 +54,11 @@ class Node:
         if self.blockchain.check_block_identity(block):
             self.blockchain.push_block(block)
 
-        message = Message(self.p2p.socketConnector, "BLOCK", block)
-        # Encode the message
-        message_encoded = BlockChain.Utils.encode(message)
-        # Broadcast the encoded message
-        self.p2p.broadcast(message_encoded)
+        # message = Message(self.p2p.socketConnector, "BLOCK", block)
+        # # Encode the message
+        # message_encoded = BlockChain.Utils.encode(message)
+        # # Broadcast the encoded message
+        # self.p2p.broadcast(message_encoded)
 
     # notifies the blockchain that is time to forge a new block
     def forge_block(self):
