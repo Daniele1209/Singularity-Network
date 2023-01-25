@@ -1,4 +1,5 @@
 import sys
+import time
 
 from config import settings
 
@@ -23,15 +24,15 @@ class UI:
         api_port = int(sys.argv[3]) if len(sys.argv) > 3 else settings.host_api_port
         origin_ip = sys.argv[4] if len(sys.argv) > 4 else settings.origin_ip
         origin_port = int(sys.argv[5]) if len(sys.argv) > 5 else settings.origin_port
-        
+
         if len(sys.argv) > 7:
             keyfile = sys.argv[6], sys.argv[7]
 
-        node = Node(ip, port, keyfile)
+        node: Node = Node(ip, port, keyfile)
         node.startP2P(origin_ip, origin_port)
 
-        api = NodeAPI(node)
-        api.start(ip, api_port)
+        api = NodeAPI()
+        api.start(ip, api_port, node)
 
 
 ui = UI()

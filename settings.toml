@@ -1,5 +1,5 @@
 genesis_dev_address = "SndKi6o0fby8nmsEA14ZPHbEWzLbeimPb8c2PIEHF7gK16vXV1yz9UxlYDXcod4fEyJPUIK2wzSrBGZala73hovtLz8pqRwbI1iPQoPMUd+4l21+FOXZp7hBYY1NEnbUQEmsev5Rz0r7g9RqrXjNs+0OHn4upRnxuXm26lTM7EM8nkuNWoOrcD2Vkp49qZ3cJuddv+mp1Dex6VyOP7t/3jJkxxXkGYnXe6mrhLFZn8icVZ2rth2SQbYkVX9uWf6NwBeu7AR1jw+Pk5MZs+CX85gA+pYdVgVfepPUfBoAp601BX+fH2hKBDMhXWUykvYrCOMjccRVoyPmO0CJB0zuaw=="
-block_size = 20
+block_size = 1
 minimum_fee = 1
 genesis_public_key_path = "./Keys/PublicKey.pem"
 genesis_private_key_path = "./Keys/PrivateKey.pem"
@@ -7,6 +7,6 @@ wallet_keys_folder = "./Keys"
 delay_between_p2p_network_discovery_seconds = 10
 host_ip = "0.0.0.0"
 host_port = 10001
-host_api_port  = 5000
+host_api_port  = 4000
 origin_ip = "127.0.0.1"
 origin_port = 10001

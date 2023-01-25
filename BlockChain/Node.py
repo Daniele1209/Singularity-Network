@@ -48,6 +48,7 @@ class Node:
         # check of a a blockchain is in sync with the network
         # if not, update the blocks
         if not self.blockchain.check_block_count(block):
+            print("REQUEST CHAIN\n")
             self.request_chain()
 
         if self.blockchain.check_block_identity(block):
@@ -68,11 +69,8 @@ class Node:
             new_block = self.blockchain.create_block(self.wallet)
             if new_block != None:
                 message = Message(self.p2p.socketConnector, "BLOCK", new_block)
-                encoded_message = Utils.encode(message)
+                encoded_message = BlockChain.Utils.encode(message)
                 self.p2p.broadcast(encoded_message)
-            message = Message(self.p2p.socketConnector, "BLOCK", new_block)
-            encoded_message = BlockChain.Utils.encode(message)
-            self.p2p.broadcast(encoded_message)
 
     # request the blockchain from other nodes
     def request_chain(self):
@@ -101,8 +99,3 @@ class Node:
     def startP2P(self, ip: str = "localhost", port: int = 10001):
         self.p2p = SocketCommunication(self.ip, self.port)
         self.p2p.start_socket_communication(self, ip, port)
-
-    def startAPI(self, api_port):
-        self.api = NodeAPI()
-        self.api.inject_node(self)
-        self.api.start(api_port)

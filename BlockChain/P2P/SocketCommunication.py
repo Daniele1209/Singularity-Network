@@ -63,7 +63,7 @@ class SocketCommunication(Node):
             print(str(block.toJson()))
             self.node.handle_block(block)
         elif message.message_type == "BLOCKCHAINREQUEST":
-            self.node.handle_chain_request(conn_node)
+            self.node.handle_chain_request(node)
         elif message.message_type == "BLOCKCHAIN":
             blockchain = message.data
             self.node.handle_received_blockchain(blockchain)

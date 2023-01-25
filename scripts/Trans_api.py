@@ -30,8 +30,14 @@ if __name__ == "__main__":
         name="exchange", write=False
     )  # why is this the exchange account since wallet2 has genesis key
 
+    exchange.generateFromPair(
+        "../Keys/PublicKey.pem", "../Keys/PrivateKey.pem"
+    )
     wallet2.generateFromPair(
-        settings.genesis_public_key_path, settings.genesis_private_key_path
+        "../Keys/test2_PublicKey.pem", "../Keys/test2_PrivateKey.pem"
+    )
+    wallet1.generateFromPair(
+        "../Keys/test1_PublicKey.pem", "../Keys/test1_PrivateKey.pem"
     )
 
     post_transaction(exchange, wallet2, 100, "EXCHANGE")
@@ -41,3 +47,8 @@ if __name__ == "__main__":
     post_transaction(wallet1, wallet1, 25, "STAKE")
     post_transaction(wallet2, wallet1, 10, "TRANSFER")
     post_transaction(wallet2, wallet1, 10, "TRANSFER")
+
+    # changes the forger to wallet 1
+    post_transaction(wallet1, wallet2, 50, "TRANSFER")
+    post_transaction(wallet2, wallet1, 40, "TRANSFER")
+    post_transaction(wallet1, wallet2, 30, "TRANSFER")
