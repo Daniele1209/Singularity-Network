@@ -31,14 +31,16 @@ class Node:
     def handle_transaction(self, transaction):
         if self.blockchain.check_block_transaction(transaction):
             self.blockchain.insert_transaction(transaction)
+            # Check if a new forger is required
+            if self.blockchain.forger_required():
+                self.forge_block()
+
             message = Message(self.p2p.socketConnector, "TRANSACTION", transaction)
             # Encode the message
             message_encoded = BlockChain.Utils.encode(message)
             # Broadcast the encoded message
             self.p2p.broadcast(message_encoded)
-            # Check if a new forger is required
-            if self.blockchain.forger_required():
-                self.forge_block()
+
 
     def handle_block(self, block: Block):
         # signature_valid = Wallet.check_verified(
@@ -65,12 +67,14 @@ class Node:
         chosen_forger = self.blockchain.choose_forger()
         # check if our node is the forger
         if chosen_forger == self.wallet.get_public_key():
-            print("I am the chosen forger")
+            print("CURRENT FORGER")
             new_block = self.blockchain.create_block(self.wallet)
-            if new_block != None:
+            if new_block is not None:
                 message = Message(self.p2p.socketConnector, "BLOCK", new_block)
                 encoded_message = BlockChain.Utils.encode(message)
                 self.p2p.broadcast(encoded_message)
+            else:
+                print("!BLOCK FAILED TO CREATE!")
 
     # request the blockchain from other nodes
     def request_chain(self):
@@ -95,6 +99,13 @@ class Node:
         #         if blockNumber >= localBlockCount:
         #             localBlockchainCopy.push_block(block)
         #     self.blockchain = localBlockchainCopy
+
+    def handle_rollback(self):
+        if self.blockchain.rollback():
+            message = Message(self.p2p.socketConnector, "ROLLBACK", self.blockchain)
+            encoded_message = BlockChain.Utils.encode(message)
+            self.p2p.broadcast(encoded_message)
+        print("ROLLBACK FAILED")
 
     def startP2P(self, ip: str = "localhost", port: int = 10001):
         self.p2p = SocketCommunication(self.ip, self.port)

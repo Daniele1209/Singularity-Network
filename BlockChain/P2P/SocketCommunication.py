@@ -69,6 +69,9 @@ class SocketCommunication(Node):
         elif message.message_type == "BLOCKCHAIN":
             blockchain = message.data
             self.node.handle_received_blockchain(blockchain)
+        elif message.message_type == "ROLLBACK":
+            blockchain = message.data
+            self.node.handle_received_blockchain(blockchain)
 
     def send(self, receiver, data):
         self.send_to_node(receiver, data)

@@ -56,6 +56,7 @@ class NodeAPI(FlaskView):
 
         # get and handle the transactions
         transaction = Utls.decode(values["transaction"])
+        print("RECEIVED TRANSACTION")
         node.handle_transaction(transaction)
         response = {"message": "Received transaction"}
         return jsonify(response), 201
@@ -67,3 +68,10 @@ class NodeAPI(FlaskView):
     @route("/stake", methods=["GET"])
     def get_stakes(self):
         return node.blockchain.get_stake_amount()
+
+    @route("/rollback", methods=["POST"])
+    def blockchain_rollback(self):
+        node.handle_rollback()
+        response = {"message": "Rollback performed"}
+        return jsonify(response), 201
+
