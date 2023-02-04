@@ -13,6 +13,7 @@ from BlockChain.Exceptions import (
 )
 from BlockChain.Transaction import Transaction
 from BlockChain.Wallet.Wallet import Wallet
+import json
 
 
 class Chain:
@@ -34,6 +35,8 @@ class Chain:
         self.chain = copy.deepcopy(current_chain.chain)
         self.pendingTransactions = copy.deepcopy(current_chain.pendingTransactions)
         self.account_model = copy.deepcopy(current_chain.account_model)
+        with open('data/blockchain_data.json', 'w') as out_file:
+            out_file.write(json.dumps(current_chain.toJson()))
 
     def rollback(self):
         if len(self.chain) > 1:
@@ -75,7 +78,14 @@ class Chain:
         transaction_exists = self.check_transaction(transaction)
 
         if signature_valid and transaction_exists:
-            self.pendingTransactions.append(transaction)
+            inserted = False
+            for trans_index, trans in enumerate(self.pendingTransactions):
+                if trans.get_time() > transaction.get_time():
+                    self.pendingTransactions.insert(trans_index, transaction)
+                    inserted = True
+                    break
+            if not inserted:
+                self.pendingTransactions.append(transaction)
 
     def remove_transactions(self, transactions):
         for transaction in transactions:

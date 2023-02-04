@@ -45,15 +45,22 @@ if __name__ == "__main__":
     post_transaction(exchange, wallet1, 100, "EXCHANGE")
     post_transaction(exchange, wallet1, 10, "EXCHANGE")
 
-    time.sleep(3)
+    time.sleep(2)
 
     post_transaction(wallet1, wallet1, 25, "STAKE")
     post_transaction(wallet2, wallet1, 10, "TRANSFER")
     post_transaction(wallet2, wallet1, 10, "TRANSFER")
 
-    time.sleep(3)
+    time.sleep(2)
 
     # changes the forger to wallet 1
     post_transaction(wallet1, wallet2, 50, "TRANSFER")
     post_transaction(wallet2, wallet1, 40, "TRANSFER")
     post_transaction(wallet1, wallet2, 30, "TRANSFER")
+
+    time.sleep(2)
+
+    # this will fail and block is canceled
+    post_transaction(wallet1, wallet2, 10, "TRANSFER")
+    post_transaction(wallet2, wallet1, 1000, "TRANSFER") # invalid balance error
+    post_transaction(wallet1, wallet2, 10, "TRANSFER")

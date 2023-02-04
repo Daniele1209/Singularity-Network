@@ -37,6 +37,9 @@ class Transaction:
     def get_fee(self):
         return self._fee
 
+    def get_time(self):
+        return self._time
+
     def signed(self):
         if self._signature:
             return True
